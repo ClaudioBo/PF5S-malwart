@@ -9,8 +9,9 @@ if (isset($_GET['busqueda'])) {
   $busqueda = "WHERE nombre LIKE '%" . mysqli_escape_string($mysqli, $_GET['busqueda']) . "%'";
 }
 
-$query = "SELECT * FROM productos " . $busqueda;
 $productos = [];
+
+$query = "SELECT * FROM productos " . $busqueda;
 if ($result = $mysqli->query($query)) {
   while ($res = mysqli_fetch_array($result)) {
     $prd = new Producto();

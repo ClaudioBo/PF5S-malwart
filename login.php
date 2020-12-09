@@ -1,10 +1,9 @@
 <?php
-
+session_start();
 $error = [];
-
-if (isset($_SESSION['id_user'])) {
+if (isset($_SESSION)) {
   if (isset($_SESSION['id_user'])) {
-    header('Location: pane.php');
+    // header('Location: pane.php');
   }
 }
 
@@ -37,7 +36,6 @@ if (isset($_POST['send-login'])) {
     $id_o_error = cargarUsuario($email, $pass);
 
     if (!is_array($id_o_error)) {
-      session_start();
       $_SESSION['id_user'] = $id_o_error;
       header('Location: productos.php');
     } else {
