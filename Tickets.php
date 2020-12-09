@@ -3,7 +3,7 @@
 include_once "connections/conn.php";
 include_once "clases/ticket.php";
 
-$query = "SELECT * FROM productos " . $busqueda;
+$query = "SELECT * FROM tickets " . $busqueda;
 $tickets = [];
 if ($result = $mysqli->query($query)) {
     while ($res = mysqli_fetch_array($result)) {
