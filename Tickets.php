@@ -10,9 +10,8 @@ if ($result = $mysqli->query($query)) {
         $tck = new Ticket();
         $tck->id = $res['id'];
         $tck->id_cliente = $res['id_cliente'];
-        $tck->id_empleado = $res['id_empleado'];
         $tck->fecha = $res['fecha'];
-        array_push($productos, $tck);
+        array_push($tickets, $tck);
     }
     $result->free_result();
 }
@@ -30,6 +29,32 @@ include "head.html"
     <?php
     include "navbar.php";
     ?>
+    <table>
+        <tr>
+            <th>Folio</th>
+            <th>Id cliente</th>
+            <th>Fecha</th>
+        </tr>
+        <?php
+        foreach ($tickets as $tick) {
+        ?>
+
+            <tr>
+                <td>
+                    <?echo $tick->id?>
+                </td>
+                <td>
+                    <?echo $tick->id_cliente?>
+                </td>
+                <td>
+                    <?echo $tick->fecha?>
+                </td>
+            </tr>
+        <?php
+        }
+
+        ?>
+    </table>
 </body>
 
 </html>
