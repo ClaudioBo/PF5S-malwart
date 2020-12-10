@@ -30,7 +30,7 @@ include "head.html"
           <strong>Pagina no encontrada</strong>
         </div>
         <div class="text-center">
-          <a class="btn btn-danger" href="productos.php" role="button">Regresar</a>
+          <a class="btn btn-danger" href="index.php" role="button">Regresar</a>
         </div>
       </div>
     </div>

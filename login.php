@@ -34,7 +34,7 @@ if (isset($_POST['send-login'])) {
 
     if (!is_array($id_o_error)) {
       $_SESSION['id_user'] = $id_o_error;
-      header('Location: productos.php');
+      header('Location: index.php');
     } else {
       $error = array_merge($error, $id_o_error);
     }

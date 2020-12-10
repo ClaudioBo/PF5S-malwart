@@ -7,7 +7,7 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item <?php echo ($selectedPage == "productos") ? "active" : ""; ?>">
-                    <a class="nav-link" href="productos.php">Productos</a>
+                    <a class="nav-link" href="index.php">Productos</a>
                 </li>
                 <li class="nav-item <?php echo ($selectedPage == "carrito") ? "active" : ""; ?>">
                     <a class="nav-link" href="#">Carrito</a>
