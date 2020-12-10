@@ -2,30 +2,15 @@
 
 include_once "connections/conn.php";
 include_once "clases/producto.php";
+include_once "connections/funciones.php";
+$sesionUsuario = loginUsuarioSesion();
 
-$busqueda = "";
-
+$busqueda = null;
 if (isset($_GET['busqueda'])) {
-  $busqueda = "WHERE nombre LIKE '%" . mysqli_escape_string($mysqli, $_GET['busqueda']) . "%'";
+  $busqueda = trim($_GET['busqueda']);
 }
 
-$productos = [];
-
-$query = "SELECT * FROM productos " . $busqueda;
-if ($result = $mysqli->query($query)) {
-  while ($res = mysqli_fetch_array($result)) {
-    $prd = new Producto();
-    $prd->id = $res['id'];
-    $prd->nombre = $res['nombre'];
-    $prd->precio = $res['precio'];
-    $prd->existencia = $res['existencia'];
-    $prd->departamento = $res['departamento'];
-    $prd->descripcion = $res['descripcion'];
-    $prd->imagen = $res['imagen'];
-    array_push($productos, $prd);
-  }
-  $result->free_result();
-}
+$productos = cargarProductos($busqueda);
 $mysqli->close();
 ?>
 

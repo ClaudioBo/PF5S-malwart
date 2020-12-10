@@ -1,7 +1,7 @@
 <?php
-session_start();
 $error = [];
-if (isset($_SESSION)) {
+    if (isset($_SESSION)) {
+    session_start();
     if (isset($_SESSION['id_user'])) {
         // header('Location: pane.php');
     }
@@ -11,26 +11,8 @@ if (isset($_POST['send-login'])) {
     include_once "connections/conn.php";
     include_once "connections/funciones.php";
 
-   
 
     // Validacion de contraseña
-    if ((!isset($_POST['pass'])) || $_POST['pass'] == '') {
-        $error[] = "No se ingreso la contraseña";
-    }
-
-    if (count($error) == 0) {
-        $email = trim($_POST['correo']);
-        $pass = trim($_POST['pass']);
-
-        $id_o_error = cargarUsuario($email, $pass);
-
-        if (!is_array($id_o_error)) {
-            $_SESSION['id_user'] = $id_o_error;
-            header('Location: productos.php');
-        } else {
-            $error = array_merge($error, $id_o_error);
-        }
-    }
 }
 ?>
 

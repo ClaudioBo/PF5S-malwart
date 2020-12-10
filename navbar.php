@@ -7,13 +7,23 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item <?php echo ($selectedPage == "productos") ? "active" : ""; ?>">
-                    <a class="nav-link" href="productos.php">Productos</a>
+                    <a class="nav-link" href="index.php">Productos</a>
                 </li>
                 <li class="nav-item <?php echo ($selectedPage == "carrito") ? "active" : ""; ?>">
                     <a class="nav-link" href="#">Carrito</a>
                 </li>
                 <li class="nav-item <?php echo ($selectedPage == "usuario") ? "active" : ""; ?>">
-                    <a class="nav-link" href="login.php">Usuario </a>
+                    <?php
+                    if ($sesionUsuario != null) {
+                    ?>
+                        <a class="nav-link" href="panel.php"><strong><?php echo ($sesionUsuario->nombre); ?></strong></a>
+                    <?php
+                    } else {
+                    ?>
+                        <a class="nav-link" href="login.php">Usuario </a>
+                    <?php
+                    }
+                    ?>
                 </li>
             </ul>
         </div>
