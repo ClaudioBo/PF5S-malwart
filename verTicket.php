@@ -39,18 +39,6 @@ if (isset($_GET['id'])) {
                 array_push($id_productos, $ticpro);
             }
         }
-        $nombre_productos = [];
-
-        foreach ($id_productos as $ids) {
-            $query = sprintf(
-                "SELECT nombre FROM productos WHERE id = '%s'",
-                mysqli_escape_string($mysqli, trim($ids['id_producto']))
-            );
-            if ($result = $mysqli->query(($query))) {
-                $res = mysqli_fetch_array($result);
-                array_push($nombre_productos, $res);
-            }
-        }
     }
 }
 
@@ -79,7 +67,25 @@ include "head.html";
             <th>Cantidad</th>
         </tr>
         <?php
-            foreach($id_productos as $prod)
+        foreach ($id_productos as $prod) {
+            $query = sprintf(
+                "SELECT nombre FROM productos WHERE id = '%s'",
+                mysqli_escape_string($mysqli, trim($prod['id_producto']))
+            );
+            if ($result = $mysqli->query(($query))) {
+                $res = mysqli_fetch_array($result);
+            }
+            $url = "verProducto.php?id=".$prod->id_producto;
+
+        ?>
+        <tr>
+            <td><?php echo $prod->id_producto?></td>
+            <td><a href="<?php echo $url ?>"><?php echo $res?></a></td>
+            <td><?php echo $prod->cantidad?></td>
+        </tr>
+
+        <?php
+        }
         ?>
     </table>
     <?php
