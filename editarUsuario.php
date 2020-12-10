@@ -1,6 +1,12 @@
 <?php
 $error = [];
-    if (isset($_SESSION)) {
+
+$resQueryLoggedUserDetail = mysqli_query($connLocalhost, $queryLoggedUserDetail) or trigger_error("El query para obtener los detalles del usuario loggeado falló");
+
+$LoggedUserDetail = mysqli_fetch_assoc($resQueryLoggedUserDetail);
+
+
+if (isset($_SESSION)) {
     session_start();
     if (isset($_SESSION['id_user'])) {
         // header('Location: pane.php');
@@ -10,10 +16,19 @@ $error = [];
 if (isset($_POST['send-login'])) {
     include_once "connections/conn.php";
     include_once "connections/funciones.php";
-
-
-    // Validacion de contraseña
 }
+
+if(isset($_POST['userUpdateSent'])){
+
+    foreach($_POST as $taco => $salsa){
+        if($salsa == '' && $taco != "telefono") $error[] = "la caja $salsa es requerida";
+    }
+
+    if($_POST['password'] != $_POST['password2']){
+        $error[] = "la contraseña no coincide";
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -56,18 +71,24 @@ include "head.html"
                 <?php
                 }
                 ?>
-                <form method="POST">
+                <form action="editarUsuario.php" method="POST">
                     <label><i class="fa "></i>Nombre</label>
-                    <input name="nombre" type="" class="form-control" placeholder="Nombre">
+                    <input name="nombre" type="text" class="form-control" placeholder="Nombre" value="<?php echo $LoggedUserDetail['nombre'];?>">
                     <br>
                     <label><i class="fa"></i>Apellido</label>
-                    <input name="apellido" type="" class="form-control" placeholder="Apellido">
+                    <input name="apellido" type="text" class="form-control" placeholder="Apellido" value="<?php echo $LoggedUserDetail['apellido'];?>">
                     <br>
                     <label><i class="fa"></i>Nueva Contraseña</label>
-                    <input name="pass" type="password" class="form-control" placeholder="*******">
+                    <input name="pass" type="password" class="form-control" placeholder="*******" value="<?php echo $LoggedUserDetail['contraseña'];?>">
                     <br>
                     <label><i class="fa "></i>Nueva Contraseña</label>
-                    <input name="pass" type="password" class="form-control" placeholder="*******">
+                    <input name="pass" type="password2" class="form-control" placeholder="*******">
+                    <br>
+                    <label><i class="fa "></i>Direccion</label>
+                    <input name="direccion" type="text" class="form-control" placeholder="Direccion" value="<?php echo $LoggedUserDetail['direccion'];?>">
+                    <br>
+                    <label><i class="fa "></i>Telefono</label>
+                    <input name="telefono" type="text" class="form-control" placeholder="Telefono" value="<?php echo $LoggedUserDetail['telefono'];?>">
                     <br>
                     <button name="send-login" type="submit" class="btn btn-primary btn-lg ml-auto d-block">Aceptar</button>
                 </form>

@@ -56,6 +56,22 @@ function loginUsuario($email, $pass)
     return $errores;
 }
 
+function editUsuario($nombre,$apellido,$tel,$dire)
+{
+    include_once "clases/usuario.php";
+    global $mysqli;
+    session_start();
+    if(isset($_SESSION['id_user'])){
+    $query = sprintf("UPDATE usuario SET nombre = '%s',apellido = '%s', contraseña = '%s',direccion = '%s' ,telefono = '%s' WHERE id ={$_SESSION['id_user']}",
+                    mysqli_escape_string($mysqli, trim($_POST['nombre'])),
+                    mysqli_escape_string($mysqli, trim($_POST['apellido'])),
+                    mysqli_escape_string($mysqli, trim($_POST['contraseña'])),
+                    mysqli_escape_string($mysqli, trim($_POST['direccion'])),
+                    mysqli_escape_string($mysqli, trim($_POST['telefono']))
+                );
+    }
+}
+
 function loginUsuarioSesion()
 {
     include_once "clases/usuario.php";
