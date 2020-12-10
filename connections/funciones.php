@@ -56,25 +56,19 @@ function loginUsuario($email, $pass)
     return $errores;
 }
 
-function editUsuario($nombre, $apellido, $contraseña, $direccion, $telefono)
+function editUsuario($idUsuario, $nombre, $apellido, $contraseña, $direccion, $telefono)
 {
     global $mysqli;
-    if (isset($_SESSION['id_user'])) {
-        $query = sprintf(
-            "UPDATE usuarios SET nombre = '%s',apellido = '%s', contraseña = '%s',direccion = '%s' ,telefono = '%s' WHERE id ={$_SESSION['id_user']}",
-            mysqli_escape_string($mysqli, $nombre),
-            mysqli_escape_string($mysqli, $apellido),
-            mysqli_escape_string($mysqli, $contraseña),
-            mysqli_escape_string($mysqli, $direccion),
-            mysqli_escape_string($mysqli, $telefono)
-        );
-        $res = $mysqli->query($query);
-        if ($mysqli->error) {
-            echo $mysqli->error;
-        }
-        return $res;
-    }
-    return false;
+    $query = sprintf(
+        "UPDATE usuarios SET nombre = '%s',apellido = '%s', contraseña = '%s',direccion = '%s' ,telefono = '%s' WHERE id ={$idUsuario}",
+        mysqli_escape_string($mysqli, $nombre),
+        mysqli_escape_string($mysqli, $apellido),
+        mysqli_escape_string($mysqli, $contraseña),
+        mysqli_escape_string($mysqli, $direccion),
+        mysqli_escape_string($mysqli, $telefono)
+    );
+    $res = $mysqli->query($query);
+    return $res;
 }
 
 function cargarUsuarioSesion()
@@ -90,6 +84,30 @@ function cargarUsuarioSesion()
         $sesionUsuario = cargarUsuario($_SESSION['id_user']);
     }
     return $sesionUsuario;
+}
+
+function cargarUsuarios()
+{
+    include_once "clases/usuario.php";
+    global $mysqli;
+    $usuarios = [];
+    $query = "SELECT * FROM usuarios";
+    if ($result = $mysqli->query($query)) {
+        while ($res = mysqli_fetch_array($result)) {
+            $usr = new Usuario();
+            $usr->id = $res['id'];
+            $usr->correo = $res['correo'];
+            $usr->contraseña = $res['contraseña'];
+            $usr->nombre = $res['nombre'];
+            $usr->apellido = $res['apellido'];
+            $usr->direccion = $res['direccion'];
+            $usr->telefono = $res['telefono'];
+            $usr->rol = $res['rol'];
+            array_push($usuarios, $usr);
+        }
+        $result->free_result();
+    }
+    return $usuarios;
 }
 
 function cargarUsuario($id)
@@ -126,7 +144,7 @@ function cargarUsuario($id)
             while ($res = mysqli_fetch_array($result)) {
                 $carrito_item = new CarritoItem();
                 $carrito_item->id = $res['id'];
-                $carrito_item->producto = cargarProducto($res['id_producto']);
+                $carrito_item->producto = cargarProducto($res['id_producto'], true);
                 $carrito_item->cantidad = $res['cantidad'];
                 array_push($carrito, $carrito_item);
             }
@@ -136,6 +154,20 @@ function cargarUsuario($id)
         $usuario->carrito = $carrito;
     }
     return $usuario;
+}
+
+function borrarUsuario($id_usuario)
+{
+    global $mysqli;
+    $query = "DELETE FROM usuarios WHERE id=?;";
+    $stmt = $mysqli->prepare($query);
+    if ($mysqli->error) {
+        echo $mysqli->error;
+    }
+    $stmt->bind_param('i', $id_usuario);
+    $res = $stmt->execute();
+    $stmt->close();
+    return $res;
 }
 
 function cargarProductos($busqueda)
@@ -185,7 +217,7 @@ function cargarProducto($id, $cargarImagen)
             $prd->existencia = $res['existencia'];
             $prd->departamento = $res['departamento'];
             $prd->descripcion = $res['descripcion'];
-            if($cargarImagen == true){
+            if ($cargarImagen == true) {
                 $prd->imagen = $res['imagen'];
             }
         }
