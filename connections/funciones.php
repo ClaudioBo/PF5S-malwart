@@ -87,51 +87,55 @@ function cargarUsuarioSesion()
     }
     $sesionUsuario = null;
     if (isset($_SESSION['id_user'])) {
-        //Cargar usuario
-        $query = sprintf(
-            "SELECT * FROM usuarios WHERE id= '%s' LIMIT 1",
-            mysqli_escape_string($mysqli, trim($_SESSION['id_user']))
-        );
+        $sesionUsuario = cargarUsuario($_SESSION['id_user']);
+    }
+    return $sesionUsuario;
+}
+
+function cargarUsuario($id)
+{
+    include_once "clases/usuario.php";
+    include_once "clases/carrito_item.php";
+    global $mysqli;
+    $usuario = null;
+    $query = sprintf(
+        "SELECT * FROM usuarios WHERE id= '%s' LIMIT 1",
+        mysqli_escape_string($mysqli, trim($id))
+    );
+    if ($result = $mysqli->query($query)) {
+        if ($result->num_rows != 0) {
+            $res = mysqli_fetch_array($result);
+            $usuario = new Usuario();
+            $usuario->id = $res['id'];
+            $usuario->correo = $res['correo'];
+            $usuario->contraseña = $res['contraseña'];
+            $usuario->nombre = $res['nombre'];
+            $usuario->apellido = $res['apellido'];
+            $usuario->direccion = $res['direccion'];
+            $usuario->telefono = $res['telefono'];
+            $usuario->rol = $res['rol'];
+        }
+        $result->free_result();
+    }
+
+    //Cargar carrito si cargo el usuario
+    if ($usuario != null) {
+        $query = "SELECT * FROM carritos WHERE id_usuario = {$usuario->id};";
+        $carrito = [];
         if ($result = $mysqli->query($query)) {
-            if ($result->num_rows != 0) {
-                $res = mysqli_fetch_array($result);
-                $sesionUsuario = new Usuario();
-                $sesionUsuario->id = $res['id'];
-                $sesionUsuario->correo = $res['correo'];
-                $sesionUsuario->contraseña = $res['contraseña'];
-                $sesionUsuario->nombre = $res['nombre'];
-                $sesionUsuario->apellido = $res['apellido'];
-                $sesionUsuario->direccion = $res['direccion'];
-                $sesionUsuario->telefono = $res['telefono'];
-                $sesionUsuario->rol = $res['rol'];
-            } else {
-                header('Location: error.php');
+            while ($res = mysqli_fetch_array($result)) {
+                $carrito_item = new CarritoItem();
+                $carrito_item->id = $res['id'];
+                $carrito_item->producto = cargarProducto($res['id_producto']);
+                $carrito_item->cantidad = $res['cantidad'];
+                array_push($carrito, $carrito_item);
             }
             $result->free_result();
         }
-
-        //Cargar carrito si cargo el usuario
-        if ($sesionUsuario != null) {
-            $query = sprintf(
-                "SELECT * FROM carritos WHERE id_usuario = '%s';",
-                mysqli_escape_string($mysqli, trim($_SESSION['id_user']))
-            );
-            $carrito = [];
-            if ($result = $mysqli->query($query)) {
-                while ($res = mysqli_fetch_array($result)) {
-                    $carrito_item = new CarritoItem();
-                    $carrito_item->id = $res['id'];
-                    $carrito_item->producto = cargarProducto($res['id_producto']);
-                    $carrito_item->cantidad = $res['cantidad'];
-                    array_push($carrito, $carrito_item);
-                }
-                $result->free_result();
-            }
-            //Insertar array de los productos en el cesto al usuario
-            $sesionUsuario->carrito = $carrito;
-        }
+        //Insertar array de los productos en el cesto al usuario
+        $usuario->carrito = $carrito;
     }
-    return $sesionUsuario;
+    return $usuario;
 }
 
 function cargarProductos($busqueda)
@@ -162,7 +166,7 @@ function cargarProductos($busqueda)
     return $productos;
 }
 
-function cargarProducto($id)
+function cargarProducto($id, $cargarImagen)
 {
     include_once "clases/producto.php";
     global $mysqli;
@@ -181,7 +185,9 @@ function cargarProducto($id)
             $prd->existencia = $res['existencia'];
             $prd->departamento = $res['departamento'];
             $prd->descripcion = $res['descripcion'];
-            $prd->imagen = $res['imagen'];
+            if($cargarImagen == true){
+                $prd->imagen = $res['imagen'];
+            }
         }
         $result->free_result();
     }
@@ -300,7 +306,7 @@ function cargarTicket($ticket_id)
             while ($res = mysqli_fetch_array($result)) {
                 $ticpro = new TicketProducto();
                 $ticpro->id = $res['id'];
-                $ticpro->producto = cargarProducto($res['id_producto']);
+                $ticpro->producto = cargarProducto($res['id_producto'], false);
                 $ticpro->cantidad = $res['cantidad'];
                 array_push($ticket_productos, $ticpro);
             }
@@ -314,28 +320,24 @@ function cargarTickets()
 {
     include_once "connections/conn.php";
     include_once "clases/ticket.php";
+    include_once "clases/ticket_producto.php";
     global $mysqli;
     $tickets = null;
-    $query = sprintf(
-        "SELECT * FROM tickets",
-        mysqli_escape_string($mysqli, trim($ticket_id))
-    );
-    if ($result = $mysqli->query($query)) { 
+    $query = "SELECT * FROM tickets";
+    if ($result = $mysqli->query($query)) {
         $tickets = [];
         while ($res = mysqli_fetch_array($result)) {
-            $res = mysqli_fetch_array($result);
+            $ticket_productos = [];
             $tick = new Ticket();
             $tick->id = $res['id'];
-            $tick->id_cliente = $res['id_cliente'];
+            $tick->cliente = cargarUsuario($res['id_cliente']);
             $tick->fecha = $res['fecha'];
-
-            $ticket_productos = [];
-            $query2 = "SELECT * FROM ticket_productos WHERE id_ticket = ".$tick->id;
+            $query2 = "SELECT * FROM ticket_productos WHERE id_ticket = " . $tick->id;
             if ($result2 = $mysqli->query($query2)) {
                 while ($res2 = mysqli_fetch_array($result2)) {
                     $ticpro = new TicketProducto();
                     $ticpro->id = $res2['id'];
-                    $ticpro->producto = cargarProducto($res2['id_producto']);
+                    $ticpro->producto = cargarProducto($res2['id_producto'], false);
                     $ticpro->cantidad = $res2['cantidad'];
                     array_push($ticket_productos, $ticpro);
                 }
@@ -343,12 +345,8 @@ function cargarTickets()
             $result2->free_result();
             $tick->ticket_productos = $ticket_productos;
             array_push($tickets, $tick);
-
         }
         $result->free_result();
     }
-
-
-
-    return $tick;
+    return $tickets;
 }
