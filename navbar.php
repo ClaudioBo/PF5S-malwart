@@ -16,7 +16,7 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"><strong><?php echo ($sesionUsuario->nombre); ?></strong></a>
                     <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="#">Editar tu informacion</a>
+                        <a class="dropdown-item" href="editarUsuario.php">Editar tu informacion</a>
                         <a class="dropdown-item" href="#">Salir</a>
                         <?php
                         if ($sesionUsuario->rol != 'Normal') {
@@ -40,17 +40,4 @@
         </div>
     </div>
 </div>
-<!-- <div class="container" style="background-color:aqua;">
-  <div class="row">
-    <div class="col">
-      1 of 3
-    </div>
-    <div class="col-6">
-      2 of 3 (wider)
-    </div>
-    <div class="col">
-      3 of 3
-    </div>
-  </div>
-</div> -->
 <br>

@@ -1,9 +1,8 @@
 <?php
 
 include_once "connections/conn.php";
-include_once "clases/producto.php";
 include_once "connections/funciones.php";
-$sesionUsuario = loginUsuarioSesion();
+$sesionUsuario = cargarUsuarioSesion();
 
 $busqueda = null;
 if (isset($_GET['busqueda'])) {

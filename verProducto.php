@@ -1,10 +1,9 @@
 <?php
-include_once "clases/producto.php";
 include_once "connections/conn.php";
 include_once "connections/funciones.php";
 if (isset($_GET['id'])) {
   if (is_numeric($_GET['id'])) {
-    $sesionUsuario = loginUsuarioSesion();
+    $sesionUsuario = cargarUsuarioSesion();
     $producto = cargarProducto(trim($_GET['id']));
 
     $reviewEnviada = null;
@@ -65,17 +64,28 @@ include "head.html"
               <p>
                 <strong>⭐⭐⭐⭐⭐</strong>
               </p>
-              <?php
-              if ($sesionUsuario != null) {
-              ?>
-                <a class="btn btn-primary" href="#" role="button">Añadir al cesto</a>
-              <?php
-              } else {
-              ?>
-                <a class="btn btn-danger disabled" href="#" role="button">Debes iniciar sesion primero</a>
-              <?php
-              }
-              ?>
+
+              <form action="carrito.php" method="post">
+                <input name="producto_id" type="number" value="<?php echo ($producto->id) ?>" hidden/>
+                <div class="row">
+                  <div class="col-sm-4 col-sm-offset-4">
+                    <input type="number" name="producto_cantidad" class="form-control form-control-sm" value="1" min="1" max="<?php echo ($producto->existencia) ?>">
+                  </div>
+                </div>
+                <br/>
+                <?php
+                if ($sesionUsuario != null) {
+                ?>
+                  <button name="send-carrito" type="submit" class="btn btn-primary btn-lg">Añadir al carrito</button>
+                <?php
+                } else {
+                ?>
+                  <a class="btn btn-danger disabled" role="button">Debes iniciar sesion primero</a>
+                <?php
+                }
+                ?>
+              </form>
+
             </div>
 
           </div>
@@ -147,7 +157,7 @@ include "head.html"
                       <option value="2">2 estrellas</option>
                       <option value="1">1 estrellas</option>
                     </select>
-                    <button name="send-review" type="submit" class="btn btn-primary">Enviar reseña</button>
+                    <button name="send-review" type="submit" class="btn btn-info">Enviar reseña</button>
                   </div>
                 <?php
                 } else {

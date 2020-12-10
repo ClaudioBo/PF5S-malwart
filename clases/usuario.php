@@ -10,4 +10,6 @@ class Usuario
     public $direccion;
     public $telefono;
     public $rol;
+
+    public $carrito;
 }

@@ -56,36 +56,44 @@ function loginUsuario($email, $pass)
     return $errores;
 }
 
-function editUsuario($nombre,$apellido,$tel,$dire)
+function editUsuario($nombre, $apellido, $contraseña, $direccion, $telefono)
 {
-    include_once "clases/usuario.php";
     global $mysqli;
-    session_start();
-    if(isset($_SESSION['id_user'])){
-    $query = sprintf("UPDATE usuario SET nombre = '%s',apellido = '%s', contraseña = '%s',direccion = '%s' ,telefono = '%s' WHERE id ={$_SESSION['id_user']}",
-                    mysqli_escape_string($mysqli, trim($_POST['nombre'])),
-                    mysqli_escape_string($mysqli, trim($_POST['apellido'])),
-                    mysqli_escape_string($mysqli, trim($_POST['contraseña'])),
-                    mysqli_escape_string($mysqli, trim($_POST['direccion'])),
-                    mysqli_escape_string($mysqli, trim($_POST['telefono']))
-                );
+    if (isset($_SESSION['id_user'])) {
+        $query = sprintf(
+            "UPDATE usuarios SET nombre = '%s',apellido = '%s', contraseña = '%s',direccion = '%s' ,telefono = '%s' WHERE id ={$_SESSION['id_user']}",
+            mysqli_escape_string($mysqli, $nombre),
+            mysqli_escape_string($mysqli, $apellido),
+            mysqli_escape_string($mysqli, $contraseña),
+            mysqli_escape_string($mysqli, $direccion),
+            mysqli_escape_string($mysqli, $telefono)
+        );
+        $res = $mysqli->query($query);
+        if ($mysqli->error) {
+            echo $mysqli->error;
+        }
+        return $res;
     }
+    return false;
 }
 
-function loginUsuarioSesion()
+function cargarUsuarioSesion()
 {
     include_once "clases/usuario.php";
+    include_once "clases/carrito_item.php";
     global $mysqli;
-    session_start();
+    if (!isset($_SESSION)) {
+        session_start();
+    }
     $sesionUsuario = null;
     if (isset($_SESSION['id_user'])) {
+        //Cargar usuario
         $query = sprintf(
             "SELECT * FROM usuarios WHERE id= '%s' LIMIT 1",
             mysqli_escape_string($mysqli, trim($_SESSION['id_user']))
         );
         if ($result = $mysqli->query($query)) {
             if ($result->num_rows != 0) {
-                $sesionUsuario = new Usuario();
                 $res = mysqli_fetch_array($result);
                 $sesionUsuario = new Usuario();
                 $sesionUsuario->id = $res['id'];
@@ -101,6 +109,27 @@ function loginUsuarioSesion()
             }
             $result->free_result();
         }
+
+        //Cargar carrito si cargo el usuario
+        if ($sesionUsuario != null) {
+            $query = sprintf(
+                "SELECT * FROM carritos WHERE id_usuario = '%s';",
+                mysqli_escape_string($mysqli, trim($_SESSION['id_user']))
+            );
+            $carrito = [];
+            if ($result = $mysqli->query($query)) {
+                while ($res = mysqli_fetch_array($result)) {
+                    $carrito_item = new CarritoItem();
+                    $carrito_item->id = $res['id'];
+                    $carrito_item->producto = cargarProducto($res['id_producto']);
+                    $carrito_item->cantidad = $res['cantidad'];
+                    array_push($carrito, $carrito_item);
+                }
+                $result->free_result();
+            }
+            //Insertar array de los productos en el cesto al usuario
+            $sesionUsuario->carrito = $carrito;
+        }
     }
     return $sesionUsuario;
 }
@@ -108,6 +137,7 @@ function loginUsuarioSesion()
 function cargarProductos($busqueda)
 {
     include_once "clases/usuario.php";
+    include_once "clases/producto.php";
     global $mysqli;
     $queryBusqueda = "";
     if (isset($busqueda)) {
@@ -190,20 +220,50 @@ function cargarReviews($idProducto)
 function enviarReseña($idUsuario, $idProducto, $calificacion, $comentario)
 {
     global $mysqli;
-    // $query = "SELECT * FROM reviews WHERE id=? AND usuario_id=? LIMIT 1;";
-    // $stmt = $mysqli->prepare($query);
-    // $stmt->bind_param('ii', $idProducto, $idUsuario);
-    // if ($stmt->execute()) {
-    //     $result = $stmt->get_result();
-    //     if ($result->num_rows != 0) {
-    //         return false;
-    //     }
-    // }
-    // $stmt->close();
     $query = "INSERT INTO reviews VALUES (NULL, ?, ?, ?, ?)";
     $stmt = $mysqli->prepare($query);
     $stmt->bind_param('iiis', $idUsuario, $idProducto, $calificacion, $comentario);
     $stmt->execute();
     $stmt->close();
     return true;
+}
+
+function añadirProductoCarrito($usuario, $id_producto, $cantidad)
+{
+    global $mysqli;
+    include_once "clases/carrito_item.php";
+
+    //Comprobar si ya esta producto para modificar cantidad
+    $carrito_item_encontrado = null;
+    foreach ($usuario->carrito as $carrito_item) {
+        if ($carrito_item->producto->id == $id_producto) {
+            if ($carrito_item->cantidad == $cantidad) {
+                return true; //Si se encontro y tiene la misma cantidad, no hacer nada
+            } else {
+                $carrito_item_encontrado = $carrito_item; //Modificar cantidad
+            }
+            break;
+        }
+    }
+
+    $query = null;
+    if ($carrito_item_encontrado == null) {
+        //No encontrado - añadir carrito
+        $query = "INSERT INTO carritos VALUES (NULL, {$usuario->id}, {$id_producto},{$cantidad})";
+        // echo "añadir";
+    } else {
+        //Encontrado - cambiar precio
+        $query = "UPDATE carritos SET cantidad={$cantidad} WHERE id_usuario={$usuario->id} AND id_producto={$id_producto}";
+        // echo "cambiar";
+    }
+    return $mysqli->query($query);
+}
+
+function borrarProductoCarrito($usuario, $id_producto)
+{
+    global $mysqli;
+    include_once "clases/carrito_item.php";
+    $query = "DELETE FROM carritos WHERE id_producto='{$id_producto}' AND id_usuario='{$usuario->id}';";
+    $res = $mysqli->query($query);
+    return $res;
 }
