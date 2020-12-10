@@ -1,20 +1,20 @@
 <?php
 
 include_once "connections/conn.php";
-include_once "clases/ticket.php";
+include_once "connections/funciones.php";
 
-$query = "SELECT * FROM tickets " . $busqueda;
-$tickets = [];
-if ($result = $mysqli->query($query)) {
-    while ($res = mysqli_fetch_array($result)) {
-        $tck = new Ticket();
-        $tck->id = $res['id'];
-        $tck->id_cliente = $res['id_cliente'];
-        $tck->fecha = $res['fecha'];
-        array_push($tickets, $tck);
-    }
-    $result->free_result();
-}
+$tickets = cargarTickets();
+// $query = "SELECT * FROM tickets ";
+// if ($result = $mysqli->query($query)) {
+//     while ($res = mysqli_fetch_array($result)) {
+//         $tck = new Ticket();
+//         $tck->id = $res['id'];
+//         $tck->id_cliente = $res['id_cliente'];
+//         $tck->fecha = $res['fecha'];
+//         array_push($tickets, $tck);
+//     }
+//     $result->free_result();
+// }
 $mysqli->close();
 ?>
 

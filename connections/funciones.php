@@ -309,3 +309,46 @@ function cargarTicket($ticket_id)
     }
     return $tick;
 }
+
+function cargarTickets()
+{
+    include_once "connections/conn.php";
+    include_once "clases/ticket.php";
+    global $mysqli;
+    $tickets = null;
+    $query = sprintf(
+        "SELECT * FROM tickets",
+        mysqli_escape_string($mysqli, trim($ticket_id))
+    );
+    if ($result = $mysqli->query($query)) { 
+        $tickets = [];
+        while ($res = mysqli_fetch_array($result)) {
+            $res = mysqli_fetch_array($result);
+            $tick = new Ticket();
+            $tick->id = $res['id'];
+            $tick->id_cliente = $res['id_cliente'];
+            $tick->fecha = $res['fecha'];
+
+            $ticket_productos = [];
+            $query2 = "SELECT * FROM ticket_productos WHERE id_ticket = ".$tick->id;
+            if ($result2 = $mysqli->query($query2)) {
+                while ($res2 = mysqli_fetch_array($result2)) {
+                    $ticpro = new TicketProducto();
+                    $ticpro->id = $res2['id'];
+                    $ticpro->producto = cargarProducto($res2['id_producto']);
+                    $ticpro->cantidad = $res2['cantidad'];
+                    array_push($ticket_productos, $ticpro);
+                }
+            }
+            $result2->free_result();
+            $tick->ticket_productos = $ticket_productos;
+            array_push($tickets, $tick);
+
+        }
+        $result->free_result();
+    }
+
+
+
+    return $tick;
+}

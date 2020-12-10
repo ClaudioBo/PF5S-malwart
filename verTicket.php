@@ -6,7 +6,11 @@ include_once "connections/funciones.php";
 if (isset($_GET['id'])) {
     if (is_numeric($_GET['id'])) {
         $ticket = cargarTicket(trim($_GET['id']));
+    } else {
+        header('Location: error.php');
     }
+}else {
+    header('Location: error.php');
 }
 
 ?>
