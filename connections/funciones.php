@@ -141,3 +141,53 @@ function cargarProducto($id)
     }
     return $prd;
 }
+
+function cargarReviews($idProducto)
+{
+    include_once "clases/review.php";
+    global $mysqli;
+    $reviews = [];
+    $query = sprintf(
+        "SELECT r.id,r.usuario_id,u.nombre,producto_id,calificacion,comentario 
+        FROM reviews AS r 
+        INNER JOIN usuarios AS u 
+        ON r.usuario_id = u.id
+        WHERE r.producto_id = %s;",
+        mysqli_escape_string($mysqli, trim($idProducto))
+    );
+    if ($result = $mysqli->query($query)) {
+        while ($res = mysqli_fetch_array($result)) {
+            $rev = new Review();
+            $rev->id = $res['id'];
+            $rev->usuario_id = $res['usuario_id'];
+            $rev->usuario_nombre = $res['nombre'];
+            $rev->producto_id = $res['producto_id'];
+            $rev->calificacion = $res['calificacion'];
+            $rev->comentario = $res['comentario'];
+            array_push($reviews, $rev);
+        }
+    }
+    $result->free_result();
+    return $reviews;
+}
+
+function enviarReseña($idUsuario, $idProducto, $calificacion, $comentario)
+{
+    global $mysqli;
+    // $query = "SELECT * FROM reviews WHERE id=? AND usuario_id=? LIMIT 1;";
+    // $stmt = $mysqli->prepare($query);
+    // $stmt->bind_param('ii', $idProducto, $idUsuario);
+    // if ($stmt->execute()) {
+    //     $result = $stmt->get_result();
+    //     if ($result->num_rows != 0) {
+    //         return false;
+    //     }
+    // }
+    // $stmt->close();
+    $query = "INSERT INTO reviews VALUES (NULL, ?, ?, ?, ?)";
+    $stmt = $mysqli->prepare($query);
+    $stmt->bind_param('iiis', $idUsuario, $idProducto, $calificacion, $comentario);
+    $stmt->execute();
+    $stmt->close();
+    return true;
+}

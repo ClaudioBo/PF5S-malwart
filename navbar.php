@@ -1,10 +1,7 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+<div class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
         <a class="navbar-brand" href="#">Malwart</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
+        <div class="collapse navbar-collapse">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item <?php echo ($selectedPage == "productos") ? "active" : ""; ?>">
                     <a class="nav-link" href="index.php">Productos</a>
@@ -16,17 +13,44 @@
                     <?php
                     if ($sesionUsuario != null) {
                     ?>
-                        <a class="nav-link" href="panel.php"><strong><?php echo ($sesionUsuario->nombre); ?></strong></a>
-                    <?php
-                    } else {
-                    ?>
-                        <a class="nav-link" href="login.php">Usuario </a>
-                    <?php
-                    }
-                    ?>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"><strong><?php echo ($sesionUsuario->nombre); ?></strong></a>
+                    <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="#">Editar tu informacion</a>
+                        <a class="dropdown-item" href="#">Salir</a>
+                        <?php
+                        if ($sesionUsuario->rol != 'Normal') {
+                        ?>
+                            <hr>
+                            <a class="dropdown-item" href="#">Panel de <?php echo ($sesionUsuario->rol) ?></a>
+                        <?php
+                        }
+                        ?>
+                    </div>
                 </li>
+            <?php
+                    } else {
+            ?>
+                <a class="nav-link" href="login.php">Usuario </a>
+            <?php
+                    }
+            ?>
+            </li>
             </ul>
         </div>
     </div>
-</nav>
+</div>
+<!-- <div class="container" style="background-color:aqua;">
+  <div class="row">
+    <div class="col">
+      1 of 3
+    </div>
+    <div class="col-6">
+      2 of 3 (wider)
+    </div>
+    <div class="col">
+      3 of 3
+    </div>
+  </div>
+</div> -->
 <br>

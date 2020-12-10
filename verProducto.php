@@ -6,6 +6,16 @@ if (isset($_GET['id'])) {
   if (is_numeric($_GET['id'])) {
     $sesionUsuario = loginUsuarioSesion();
     $producto = cargarProducto(trim($_GET['id']));
+
+    $reviewEnviada = null;
+    if (isset($_POST['send-review'])) {
+      $calificacion = $_POST['calificacion'];
+      $comentario = trim($_POST['comentario']);
+      //TODO: hacer comprobacion lol
+      enviarReseña($_SESSION['id_user'], trim($_GET['id']), $calificacion, $comentario);
+    }
+
+    $reviews = cargarReviews(trim($_GET['id']));
   } else {
     header('Location: error.php');
   }
@@ -52,6 +62,9 @@ include "head.html"
               <h1><?php echo $producto->nombre ?></h1>
               <h2 class="font-weight-light">$<?php echo $producto->precio ?> MXN</h2>
               <p class="font-weight-light"><?php echo $producto->descripcion ?></p>
+              <p>
+                <strong>⭐⭐⭐⭐⭐</strong>
+              </p>
               <?php
               if ($sesionUsuario != null) {
               ?>
@@ -73,19 +86,85 @@ include "head.html"
     <div class="card">
       <div class="card-body">
         <div class="container-fluid">
+
+          <?php
+          if (count($reviews) != 0) {
+            foreach ($reviews as $rev) {
+          ?>
+              <div class="row">
+                <div class="col-auto mr-auto">
+                  <img src="https://i.imgur.com/zRjpTrl.png" width=64>
+                  <p class="text-center"><?php echo $rev->usuario_nombre ?></p>
+                </div>
+                <div class="col-sm">
+                  <strong>comento:</strong>
+                  <p><?php echo $rev->comentario ?></p>
+                  <p>
+                    <?php
+                    $i = 0;
+                    for ($j = 0; $j < 5; $j++) {
+                      if ($i >= $rev->calificacion) {
+                        echo ("☆");
+                      } else {
+                        echo ("★");
+                        $i += 1;
+                      }
+                    }
+                    ?>
+                  </p>
+                </div>
+              </div>
+              <hr>
+            <?php
+            }
+          } else {
+            ?>
+            <div class="row">
+              <div class="col-sm">
+                <div class="alert alert-secondary text-center" role="alert">
+                  Aun nadie ha dejado una reseña, se el primero en dejar una
+                </div>
+              </div>
+            </div>
+          <?php
+          }
+
+          ?>
+
           <div class="row">
-
-            <div class="col-auto mr-auto">
-              <img src="https://via.placeholder.com/64" alt="">
-              <p class="text-center">Usuario</p>
-            </div>
-
             <div class="col-sm">
-              <strong>comento:</strong>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. In perferendis aliquam tenetur assumenda voluptate, enim natus vel quaerat! Placeat aliquid illo saepe tenetur dolorum voluptatum debitis nihil in sed rem.</p>
+              <form method="post">
+                <label><i class="fa fa-envelope"></i> Dejar una reseña</label>
+                <?php
+                if ($sesionUsuario != null) {
+                ?>
+                  <div class="input-group mb-3">
+                    <input name="comentario" type="text" class="form-control" placeholder="Escribe aqui tu reseña" maxlength="256" />
+                    <select name="calificacion">
+                      <option value="5">5 estrellas</option>
+                      <option value="4">4 estrellas</option>
+                      <option value="3">3 estrellas</option>
+                      <option value="2">2 estrellas</option>
+                      <option value="1">1 estrellas</option>
+                    </select>
+                    <button name="send-review" type="submit" class="btn btn-primary">Enviar reseña</button>
+                  </div>
+                <?php
+                } else {
+                ?>
+                  <div class="input-group mb-3">
+                    <input type="text" class="form-control text-center" disabled placeholder="Debes iniciar sesion primero">
+                    <button class="btn btn-secondary" disabled>5 estrellas</button>
+                    <button class="btn btn-secondary" disabled>Enviar reseña</button>
+                  </div>
+                <?php
+                }
+                ?>
+              </form>
+              <sub>Maximo 256 caracteres</sub>
             </div>
-
           </div>
+
         </div>
       </div>
     </div>
