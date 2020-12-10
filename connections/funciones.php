@@ -24,13 +24,12 @@ function registrarUsuario($email, $pass)
         $stmt->execute();
     }
     $stmt->close();
-
-    $mysqli->close();
     return $errores;
 }
 
 function cargarUsuario($email, $pass)
 {
+    include_once "clases/usuario.php";
     global $mysqli;
     $errores = [];
     $query = "SELECT id,contraseña FROM usuarios WHERE correo LIKE ? LIMIT 1";
@@ -43,7 +42,7 @@ function cargarUsuario($email, $pass)
         $result = $stmt->get_result();
         if ($result->num_rows != 0) {
             if ($row = $result->fetch_assoc()) {
-                if($pass != $row['contraseña']){
+                if ($pass != $row['contraseña']) {
                     $errores[] = "Contraseña incorrecta";
                 } else {
                     $errores = $row['id'];
@@ -54,6 +53,37 @@ function cargarUsuario($email, $pass)
         }
     }
     $stmt->close();
-    $mysqli->close();
     return $errores;
+}
+
+function loginUsuarioSesion()
+{
+    global $mysqli;
+    session_start();
+    $sesionUsuario = null;
+    if (isset($_SESSION['id_user'])) {
+        $query = sprintf(
+            "SELECT * FROM usuarios WHERE id= '%s' LIMIT 1",
+            mysqli_escape_string($mysqli, trim($_SESSION['id_user']))
+        );
+        if ($result = $mysqli->query($query)) {
+            if ($result->num_rows != 0) {
+                $sesionUsuario = new Usuario();
+                $res = mysqli_fetch_array($result);
+                $sesionUsuario = new Usuario();
+                $sesionUsuario->id = $res['id'];
+                $sesionUsuario->correo = $res['correo'];
+                $sesionUsuario->contraseña = $res['contraseña'];
+                $sesionUsuario->nombre = $res['nombre'];
+                $sesionUsuario->apellido = $res['apellido'];
+                $sesionUsuario->direccion = $res['direccion'];
+                $sesionUsuario->telefono = $res['telefono'];
+                $sesionUsuario->rol = $res['rol'];
+            } else {
+                header('Location: error.php');
+            }
+            $result->free_result();
+        }
+    }
+    return $sesionUsuario;
 }

@@ -1,10 +1,10 @@
 <?php
-include_once "connections/conn.php";
 include_once "clases/producto.php";
-include_once "clases/usuario.php";
-session_start();
+include_once "connections/conn.php";
+include_once "connections/funciones.php";
 if (isset($_GET['id'])) {
   if (is_numeric($_GET['id'])) {
+    $sesionUsuario = loginUsuarioSesion();
     $prd = null;
     $query = sprintf(
       "SELECT * FROM productos WHERE id= '%s' LIMIT 1",
@@ -26,42 +26,13 @@ if (isset($_GET['id'])) {
       }
       $result->free_result();
     }
-
-    $sesionUsuario = null;
-    if (isset($_SESSION)) {
-      if (isset($_SESSION['id_user'])) {
-        $query = sprintf(
-          "SELECT * FROM usuario WHERE id= '%s' LIMIT 1",
-          mysqli_escape_string($mysqli, trim($_SESSION['id_user']))
-        );
-        if ($result = $mysqli->query($query)) {
-          if ($result->num_rows != 0) {
-            $sesionUsuario = new Usuario();
-            $res = mysqli_fetch_array($result);
-            $sesionUsuario = new Usuario();
-            $sesionUsuario->id = $res['id'];
-            $sesionUsuario->correo = $res['correo'];
-            $sesionUsuario->contraseña = $res['contraseña'];
-            $sesionUsuario->nombre = $res['nombre'];
-            $sesionUsuario->apellido = $res['apellido'];
-            $sesionUsuario->direccion = $res['direccion'];
-            $sesionUsuario->telefono = $res['telefono'];
-            $sesionUsuario->rol = $res['rol'];
-          } else {
-            header('Location: error.php');
-          }
-          $result->free_result();
-        }
-      }
-    }
-
-    $mysqli->close();
   } else {
     header('Location: error.php');
   }
 } else {
   header('Location: error.php');
 }
+$mysqli->close();
 ?>
 
 
@@ -102,9 +73,9 @@ include "head.html"
               <h2 class="font-weight-light">$<?php echo $prd->precio ?> MXN</h2>
               <p class="font-weight-light"><?php echo $prd->descripcion ?></p>
               <?php
-              if (!$sesionUsuario != null) {
+              if ($sesionUsuario != null) {
               ?>
-                <a class="btn btn-primary" href="#" role="button">Añadir al cesto <?php echo $sesionUsuario->correo ?></a>
+                <a class="btn btn-primary" href="#" role="button">Añadir al cesto</a>
               <?php
               } else {
               ?>

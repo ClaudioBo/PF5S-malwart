@@ -1,3 +1,9 @@
+<?php
+include_once "connections/conn.php";
+include_once "clases/usuario.php";
+include_once "connections/funciones.php";
+$sesionUsuario = loginUsuarioSesion();
+?>
 <!DOCTYPE html>
 <html lang="en">
 

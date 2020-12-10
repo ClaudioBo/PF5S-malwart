@@ -2,15 +2,15 @@
 
 include_once "connections/conn.php";
 include_once "clases/producto.php";
+include_once "connections/funciones.php";
+$sesionUsuario = loginUsuarioSesion();
 
 $busqueda = "";
-
 if (isset($_GET['busqueda'])) {
   $busqueda = "WHERE nombre LIKE '%" . mysqli_escape_string($mysqli, $_GET['busqueda']) . "%'";
 }
 
 $productos = [];
-
 $query = "SELECT * FROM productos " . $busqueda;
 if ($result = $mysqli->query($query)) {
   while ($res = mysqli_fetch_array($result)) {

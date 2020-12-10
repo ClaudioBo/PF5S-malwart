@@ -1,10 +1,8 @@
 <?php
 session_start();
 $error = [];
-if (isset($_SESSION)) {
-  if (isset($_SESSION['id_user'])) {
-    // header('Location: pane.php');
-  }
+if (isset($_SESSION['id_user'])) {
+  header('Location: index.php');
 }
 
 if (isset($_POST['send-login'])) {
