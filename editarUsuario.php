@@ -22,7 +22,7 @@ if (isset($_POST['send-login'])) {
         $email = trim($_POST['correo']);
         $pass = trim($_POST['pass']);
 
-        $id_o_error = cargarUsuario($email, $pass);
+        $id_o_error = loginUsuario($email, $pass);
 
         if (!is_array($id_o_error)) {
             $_SESSION['id_user'] = $id_o_error;

@@ -27,7 +27,7 @@ function registrarUsuario($email, $pass)
     return $errores;
 }
 
-function cargarUsuario($email, $pass)
+function loginUsuario($email, $pass)
 {
     include_once "clases/usuario.php";
     global $mysqli;
@@ -58,6 +58,7 @@ function cargarUsuario($email, $pass)
 
 function loginUsuarioSesion()
 {
+    include_once "clases/usuario.php";
     global $mysqli;
     session_start();
     $sesionUsuario = null;
@@ -86,4 +87,57 @@ function loginUsuarioSesion()
         }
     }
     return $sesionUsuario;
+}
+
+function cargarProductos($busqueda)
+{
+    include_once "clases/usuario.php";
+    global $mysqli;
+    $queryBusqueda = "";
+    if (isset($busqueda)) {
+        $queryBusqueda = "WHERE nombre LIKE '%" . mysqli_escape_string($mysqli, $busqueda) . "%'";
+    }
+    $productos = [];
+    $query = "SELECT * FROM productos " . $queryBusqueda;
+    if ($result = $mysqli->query($query)) {
+        while ($res = mysqli_fetch_array($result)) {
+            $prd = new Producto();
+            $prd->id = $res['id'];
+            $prd->nombre = $res['nombre'];
+            $prd->precio = $res['precio'];
+            $prd->existencia = $res['existencia'];
+            $prd->departamento = $res['departamento'];
+            $prd->descripcion = $res['descripcion'];
+            $prd->imagen = $res['imagen'];
+            array_push($productos, $prd);
+        }
+        $result->free_result();
+    }
+    return $productos;
+}
+
+function cargarProducto($id)
+{
+    include_once "clases/producto.php";
+    global $mysqli;
+    $prd = null;
+    $query = sprintf(
+        "SELECT * FROM productos WHERE id= '%s' LIMIT 1",
+        mysqli_escape_string($mysqli, trim($id))
+    );
+    if ($result = $mysqli->query($query)) {
+        if ($result->num_rows != 0) {
+            $res = mysqli_fetch_array($result);
+            $prd = new Producto();
+            $prd->id = $res['id'];
+            $prd->nombre = $res['nombre'];
+            $prd->precio = $res['precio'];
+            $prd->existencia = $res['existencia'];
+            $prd->departamento = $res['departamento'];
+            $prd->descripcion = $res['descripcion'];
+            $prd->imagen = $res['imagen'];
+        }
+        $result->free_result();
+    }
+    return $prd;
 }
