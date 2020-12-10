@@ -37,11 +37,12 @@ include "head.html"
         </tr>
         <?php
         foreach ($tickets as $tick) {
+            $url = "verTicket.php?id=" . $tick->id
         ?>
 
             <tr>
                 <td>
-                    <?echo $tick->id?>
+                    <a href="<?php echo $url ?>"><?php echo $tick->id ?></a>
                 </td>
                 <td>
                     <?echo $tick->id_cliente?>
@@ -55,6 +56,9 @@ include "head.html"
 
         ?>
     </table>
+    <?php
+    include "footer.html"
+    ?>
 </body>
 
 </html>
