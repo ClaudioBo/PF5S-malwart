@@ -39,6 +39,9 @@ include "head.html"
             <div class="card-doby">
                 <div class="card-body">
                     <h1 class="card-title text-center">Administrar Productos</h1>
+                    <div class="text-center">
+                        <a href="agregarProducto.php" class="btn btn-success btn-block">Agregar producto</a>
+                    </div>
                     <div class="container home">
                         <table class="table table-striped">
                             <thead>
@@ -82,9 +85,6 @@ include "head.html"
                         </table>
                     </div>
                     <hr>
-                    <div class="text-center">
-                        <a href="agregarProducto.php" class="btn btn-success">Agregar producto</a>
-                    </div>
                 </div>
             </div>
         </div>
