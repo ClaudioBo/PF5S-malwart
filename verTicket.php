@@ -1,7 +1,11 @@
 <?php
 
 include_once "connections/conn.php";
+include_once "clases/ticket.php";
+include_once "clases/producto.php";
 include_once "connections/funciones.php";
+
+$sesionUsuario = cargarUsuarioSesion();
 
 if (isset($_GET['id'])) {
     if (is_numeric($_GET['id'])) {

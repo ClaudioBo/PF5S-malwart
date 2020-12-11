@@ -319,6 +319,44 @@ function borrarProductoCarrito($usuario, $id_producto)
     return $res;
 }
 
+function borrarCarrito($id_usuario){
+    global $mysqli;
+    $query = "DELETE FROM carritos WHERE id_usuario='{$id_usuario}';";
+    $res = $mysqli->query($query);
+    return $res;
+}
+
+function insertarTicketRelacion($id_ticket, $id_producto, $cantidad){
+    global $mysqli;
+    $query = "INSERT INTO ticket_productos (id_ticket, id_producto, cantidad) VALUES ({$id_ticket}, {$id_producto}, {$cantidad})";
+    $res = $mysqli->query($query);
+    return $res;
+}
+
+function crearTicket($id_cliente){
+    global $mysqli;
+    $query = "INSERT INTO tickets (id_cliente) VALUES ({$id_cliente})";
+    $res = $mysqli->query($query);
+    return $mysqli->insert_id;
+}
+
+function comprar($usuario){
+    global $mysqli;
+    $id_ticket = crearTicket($usuario->id);
+    foreach($usuario->carrito as $car){
+        $prod = $car->producto;
+        $cantidad = $car->cantidad;
+        $nuvex = ($prod->existencia - $cantidad);
+        $query = "UPDATE productos SET existencia = {$nuvex} WHERE id = {$prod->id}";
+        $res = $mysqli->query($query);
+        insertarTicketRelacion($id_ticket, $prod->id, $cantidad);
+    }
+    borrarCarrito($usuario->id);
+    if ($mysqli->error) {
+        return -1;
+    }
+    return $id_ticket;
+}
 function cargarTicket($ticket_id)
 {
     include_once "connections/conn.php";

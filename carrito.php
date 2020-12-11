@@ -17,6 +17,13 @@ if ($sesionUsuario != null) {
     if ($exito) {
       $sesionUsuario = cargarUsuarioSesion(); //recargar usuario porque hubo un cambio en el cesto
     }
+  } elseif(isset($_POST['comprar'])){
+    $exito = comprar($sesionUsuario);
+    if($exito != -1){
+      header('Location: gracias.php?folio='.$exito);
+    } else {
+      header('Location: error.php');
+    }
   }
 }
 
@@ -130,7 +137,9 @@ include "head.html"
                   </li>
                 </ul>
               </div>
-              <button name="send-comprar" type="submit" class="btn btn-primary">Comprar</button>
+              <form method="POST">
+                <button name="comprar" type="submit" class="btn btn-danger">Comprar</button>
+              </form>
           <?php
 
         }
