@@ -2,6 +2,9 @@
 
 include_once "connections/conn.php";
 include_once "clases/ticket.php";
+include_once "connections/funciones.php";
+
+$sesionUsuario = cargarUsuarioSesion();
 
 $query = "SELECT * FROM tickets " . $busqueda;
 $tickets = [];
