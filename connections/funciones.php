@@ -3,7 +3,7 @@ function registrarUsuario($email, $pass, $nom, $apell, $direc, $tel)
 {
     global $mysqli;
     $errores = [];
-    $query = "SELECT id FROM usuarios WHERE correo LIKE ? LIMIT 1;";
+    $query = "SELECT id FROM dt_usuarios WHERE correo LIKE ? LIMIT 1;";
     $stmt = $mysqli->prepare($query);
     $stmt->bind_param('s', $email);
     if ($stmt->execute()) {
@@ -32,7 +32,7 @@ function loginUsuario($email, $pass)
     include_once "clases/usuario.php";
     global $mysqli;
     $errores = [];
-    $query = "SELECT id,contraseña FROM usuarios WHERE correo LIKE ? LIMIT 1";
+    $query = "SELECT id,contraseña FROM dt_usuarios WHERE correo LIKE ? LIMIT 1";
     $stmt = $mysqli->prepare($query);
     if ($mysqli->error) {
         echo $mysqli->error;
@@ -91,7 +91,7 @@ function cargarUsuarios()
     include_once "clases/usuario.php";
     global $mysqli;
     $usuarios = [];
-    $query = "SELECT * FROM usuarios";
+    $query = "SELECT * FROM dt_usuarios";
     if ($result = $mysqli->query($query)) {
         while ($res = mysqli_fetch_array($result)) {
             $usr = new Usuario();
@@ -117,7 +117,7 @@ function cargarUsuario($id)
     global $mysqli;
     $usuario = null;
     $query = sprintf(
-        "SELECT * FROM usuarios WHERE id= '%s' LIMIT 1",
+        "SELECT * FROM dt_usuarios WHERE id= '%s' LIMIT 1",
         mysqli_escape_string($mysqli, trim($id))
     );
     if ($result = $mysqli->query($query)) {
@@ -138,7 +138,7 @@ function cargarUsuario($id)
 
     //Cargar carrito si cargo el usuario
     if ($usuario != null) {
-        $query = "SELECT * FROM carritos WHERE id_usuario = {$usuario->id};";
+        $query = "SELECT * FROM dt_carritos WHERE id_usuario = {$usuario->id};";
         $carrito = [];
         if ($result = $mysqli->query($query)) {
             while ($res = mysqli_fetch_array($result)) {
@@ -159,7 +159,7 @@ function cargarUsuario($id)
 function borrarProducto($id_producto)
 {
     global $mysqli;
-    $query = "DELETE FROM productos WHERE id=?;";
+    $query = "DELETE FROM dt_productos WHERE id=?;";
     $stmt = $mysqli->prepare($query);
     $stmt->bind_param('i', $id_producto);
     $res = $stmt->execute();
@@ -170,7 +170,7 @@ function borrarProducto($id_producto)
 function borrarUsuario($id_usuario)
 {
     global $mysqli;
-    $query = "DELETE FROM usuarios WHERE id=?;";
+    $query = "DELETE FROM dt_usuarios WHERE id=?;";
     $stmt = $mysqli->prepare($query);
     if ($mysqli->error) {
         echo $mysqli->error;
@@ -195,9 +195,9 @@ function cargarProductos($busqueda, $cargarImagen, $pagina)
         $queryBusqueda = $queryBusqueda . " OFFSET " . (9 * $pagina);
     }
     $productos = [];
-    $query = "SELECT * FROM productos " . $queryBusqueda;
+    $query = "SELECT * FROM dt_productos " . $queryBusqueda;
     if (!$cargarImagen) {
-        $query = "SELECT id,nombre,precio,existencia,departamento,descripcion FROM productos " . $queryBusqueda;
+        $query = "SELECT id,nombre,precio,existencia,departamento,descripcion FROM dt_productos " . $queryBusqueda;
     }
     if ($result = $mysqli->query($query)) {
         while ($res = mysqli_fetch_array($result)) {
@@ -224,7 +224,7 @@ function cargarProducto($id, $cargarImagen)
     global $mysqli;
     $prd = null;
     $query = sprintf(
-        "SELECT * FROM productos WHERE id= '%s' LIMIT 1",
+        "SELECT * FROM dt_productos WHERE id= '%s' LIMIT 1",
         mysqli_escape_string($mysqli, trim($id))
     );
     if ($result = $mysqli->query($query)) {
@@ -386,7 +386,7 @@ function borrarProductoCarrito($usuario, $id_producto)
 {
     global $mysqli;
     include_once "clases/carrito_item.php";
-    $query = "DELETE FROM carritos WHERE id_producto='{$id_producto}' AND id_usuario='{$usuario->id}';";
+    $query = "DELETE FROM dt_carritos WHERE id_producto='{$id_producto}' AND id_usuario='{$usuario->id}';";
     $res = $mysqli->query($query);
     return $res;
 }
@@ -394,7 +394,7 @@ function borrarProductoCarrito($usuario, $id_producto)
 function borrarCarrito($id_usuario)
 {
     global $mysqli;
-    $query = "DELETE FROM carritos WHERE id_usuario='{$id_usuario}';";
+    $query = "DELETE FROM dt_carritos WHERE id_usuario='{$id_usuario}';";
     $res = $mysqli->query($query);
     return $res;
 }
@@ -442,7 +442,7 @@ function cargarTicket($ticket_id)
     global $mysqli;
     $tick = null;
     $query = sprintf(
-        "SELECT * FROM tickets WHERE id= '%s' LIMIT 1",
+        "SELECT * FROM dt_tickets WHERE id= '%s' LIMIT 1",
         mysqli_escape_string($mysqli, trim($ticket_id))
     );
     if ($result = $mysqli->query($query)) {
@@ -459,7 +459,7 @@ function cargarTicket($ticket_id)
     if ($tick != null) {
         $ticket_productos = [];
         $query = sprintf(
-            "SELECT * FROM ticket_productos WHERE id_ticket = '%s'",
+            "SELECT * FROM dt_ticket_productos WHERE id_ticket = '%s'",
             mysqli_escape_string($mysqli, trim($ticket_id))
         );
         if ($result = $mysqli->query($query)) {
@@ -483,7 +483,7 @@ function cargarTickets()
     include_once "clases/ticket_producto.php";
     global $mysqli;
     $tickets = null;
-    $query = "SELECT * FROM tickets";
+    $query = "SELECT * FROM dt_tickets";
     if ($result = $mysqli->query($query)) {
         $tickets = [];
         while ($res = mysqli_fetch_array($result)) {
@@ -492,7 +492,7 @@ function cargarTickets()
             $tick->id = $res['id'];
             $tick->cliente = cargarUsuario($res['id_cliente']);
             $tick->fecha = $res['fecha'];
-            $query2 = "SELECT * FROM ticket_productos WHERE id_ticket = " . $tick->id;
+            $query2 = "SELECT * FROM dt_ticket_productos WHERE id_ticket = " . $tick->id;
             if ($result2 = $mysqli->query($query2)) {
                 while ($res2 = mysqli_fetch_array($result2)) {
                     $ticpro = new TicketProducto();
