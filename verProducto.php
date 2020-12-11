@@ -4,7 +4,7 @@ include_once "connections/funciones.php";
 if (isset($_GET['id'])) {
   if (is_numeric($_GET['id'])) {
     $sesionUsuario = cargarUsuarioSesion();
-    $producto = cargarProducto(trim($_GET['id']));
+    $producto = cargarProducto(trim($_GET['id']), true);
 
     $reviewEnviada = null;
     if (isset($_POST['send-review'])) {

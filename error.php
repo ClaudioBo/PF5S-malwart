@@ -23,10 +23,10 @@ include "head.html"
     </br></br>
     <div class="shadow card" style="border-top: 10px solid #ff0000">
       <div class="card-body">
-        <h4 class="card-title text-center">404</h4>
+        <h4 class="card-title text-center">Error</h4>
         <hr>
         <div class="alert alert-danger text-center" role="alert">
-          <strong>Pagina no encontrada</strong>
+          <strong>Pagina no encontrada o hubo un error.</strong>
         </div>
         <div class="text-center">
           <a class="btn btn-danger" href="index.php" role="button">Regresar</a>

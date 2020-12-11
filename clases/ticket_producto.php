@@ -3,7 +3,6 @@
 class TicketProducto
 {
     public $id;
-    public $id_ticket;
-    public $id_producto;
+    public $producto;
     public $cantidad;
 }

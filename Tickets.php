@@ -6,18 +6,7 @@ include_once "connections/funciones.php";
 
 $sesionUsuario = cargarUsuarioSesion();
 
-$query = "SELECT * FROM tickets " . $busqueda;
-$tickets = [];
-if ($result = $mysqli->query($query)) {
-    while ($res = mysqli_fetch_array($result)) {
-        $tck = new Ticket();
-        $tck->id = $res['id'];
-        $tck->id_cliente = $res['id_cliente'];
-        $tck->fecha = $res['fecha'];
-        array_push($tickets, $tck);
-    }
-    $result->free_result();
-}
+$tickets = cargarTickets();
 $mysqli->close();
 ?>
 
@@ -35,8 +24,9 @@ include "head.html"
     <table>
         <tr>
             <th>Folio</th>
-            <th>Id cliente</th>
+            <th>Cliente</th>
             <th>Fecha</th>
+            <th>Total</th>
         </tr>
         <?php
         foreach ($tickets as $tick) {
@@ -48,10 +38,20 @@ include "head.html"
                     <a href="<?php echo $url ?>"><?php echo $tick->id ?></a>
                 </td>
                 <td>
-                    <?echo $tick->id_cliente?>
+                    <?php echo $tick->cliente->nombre ?>
                 </td>
                 <td>
-                    <?echo $tick->fecha?>
+                    <?php echo $tick->fecha ?>
+                </td>
+                <td>
+                    $<?php
+                        $total = 0;
+                        foreach ($tick->ticket_productos as $tick_prod) {
+                            $total += $tick_prod->producto->precio * $tick_prod->cantidad;
+                        }
+                        echo ($total);
+                        ?>
+                    MXN
                 </td>
             </tr>
         <?php

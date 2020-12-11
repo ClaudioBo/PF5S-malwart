@@ -9,7 +9,7 @@ if (isset($_GET['busqueda'])) {
   $busqueda = trim($_GET['busqueda']);
 }
 
-$productos = cargarProductos($busqueda);
+$productos = cargarProductos($busqueda, true);
 $mysqli->close();
 ?>
 
