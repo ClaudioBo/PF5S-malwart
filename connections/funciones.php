@@ -126,7 +126,7 @@ function cargarUsuario($id)
             while ($res = mysqli_fetch_array($result)) {
                 $carrito_item = new CarritoItem();
                 $carrito_item->id = $res['id'];
-                $carrito_item->producto = cargarProducto($res['id_producto']);
+                $carrito_item->producto = cargarProducto($res['id_producto'],true);
                 $carrito_item->cantidad = $res['cantidad'];
                 array_push($carrito, $carrito_item);
             }

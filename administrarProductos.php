@@ -1,9 +1,43 @@
+<?php
+$error =[];
+include_once "connections/conn.php";
+include_once "connections/funciones.php";
+$sesionUsuario = cargarUsuarioSesion();
+
+if (isset($_POST['send-edit'])) {
+    foreach ($_POST as $taco => $salsa) {
+        if ($salsa == '' && $taco != "send-edit"){
+            $error[] = "la caja $taco es requerida";
+        }
+    }
+    if (isset($_SESSION)) {
+        session_start();
+        if (isset($_SESSION['id_user'])) {
+            // header('Location: pane.php');
+        }
+    }
+
+    if(count($error) ==0){
+        $nombre = $_POST['nombre'];
+        $precio = $_POST['precio'];
+        $existencia = $_POST['existencia'];
+        $departamento = $_POST['departamento'];
+        $descripcion = $_POST['descripcion'];
+        if(cargarProductos($nombre,$precio,$existencia,$departamento,$descripcion)){
+            header('Location: administrarProductos.php');
+        } else{
+            $error[] = "hubo un problema con la query";
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <!-- Head -->
 <?php
-$selectedPage = "Cuentas - Ingreso";
+$selectedPage = "administrarProductos";
 include "head.html"
 ?>
 
@@ -14,11 +48,11 @@ include "head.html"
     ?>
 
     <!-- Page Content -->
-    <div class="container mt-5 mb-5 col-sm-11 col-md-8 col-lg-4 col-xl-4">
+    <div class="card">
         </br></br>
-        <div class="shadow card" style="border-top: 10px solid #007BFF">
+        <div class="card-doby" >
             <div class="card-body">
-                <h4 class="card-title text-center">Inicio de sesión</h4>
+                <h1 class="card-title text-center">Administrar Productos</h1>
                 <hr>
                 <?php
                 if (count($error) != 0) {
@@ -38,27 +72,29 @@ include "head.html"
                 <?php
                 }
                 ?>
-                <form method="POST">
-                    <table>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Precio</th>
-                            <th>Existencia</th>
-                            <th>departamento</th>
-                            <th>descripcion</th>
-                        </tr>
-                        <tr>
-                            <td>P</td>
+                <div class="container home">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Precio</th>
+                                <th>Existencia</th>
+                                <th>departamento</th>
+                                <th>descripcion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <td><?php echo $sesionUsuario->nombre;?></td>
                             <td>I</td>
                             <td>T</td>
                             <td>O</td>
                             <td>M</td>
                         </tr>
+                        </tbody>
                     </table>
-                </form>
+                </div>
                 <hr>
-                <p>No tienes cuenta?</p>
-                <a class="btn btn-info" href="signup.php" role="button">Crear cuenta</a>
             </div>
         </div>
     </div>
