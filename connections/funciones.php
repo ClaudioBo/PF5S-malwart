@@ -156,6 +156,19 @@ function cargarUsuario($id)
     return $usuario;
 }
 
+function borrarProducto($id_producto)
+{
+    global $mysqli;
+    $$query = "DELETE FROM productos WHERE id=?;";
+    if ($mysqli->error) {
+        echo $mysqli->error;
+    }
+    $stmt->bind_param('i', $id_producto);
+    $res = $stmt->execute();
+    $stmt->close();
+    return $res;
+}
+
 function borrarUsuario($id_usuario)
 {
     global $mysqli;
