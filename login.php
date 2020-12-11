@@ -3,8 +3,8 @@ include_once "connections/funciones.php";
 session_start();
 $sesionUsuario = null;
 $errores = [];
-if (isset($_SESSION['id_user'])) {
-  header('Location: index.php');
+if (isset($_SESSION['id_user']) && $_SESSION['id_user'] == '') {
+  header('Location: logout.php');
 }
 
 if (isset($_POST['send-login'])) {
