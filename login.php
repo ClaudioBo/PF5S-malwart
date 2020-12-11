@@ -1,5 +1,6 @@
 <?php
 session_start();
+$sesionUsuario = null;
 $error = [];
 if (isset($_SESSION['id_user'])) {
   header('Location: index.php');

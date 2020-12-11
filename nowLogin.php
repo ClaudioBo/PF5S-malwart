@@ -3,6 +3,7 @@
 
 <!-- Head -->
 <?php
+$sesionUsuario = null;
 $selectedPage = "Cuentas - Registro";
 include "head.html"
 ?>

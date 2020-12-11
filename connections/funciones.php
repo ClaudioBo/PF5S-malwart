@@ -259,7 +259,7 @@ function agregarProducto($nombre, $precio, $existencia, $departamento, $descripc
         mysqli_escape_string($mysqli, $existencia),
         mysqli_escape_string($mysqli, $departamento),
         mysqli_escape_string($mysqli, $descripcion),
-        $img,
+        $img
     );
     $lol = $mysqli->query($query);
     return true;
@@ -288,7 +288,7 @@ function editarProducto($id_producto, $nombre, $precio, $existencia, $departamen
             mysqli_escape_string($mysqli, $departamento),
             mysqli_escape_string($mysqli, $descripcion),
             $img,
-            mysqli_escape_string($mysqli, $id_producto),
+            mysqli_escape_string($mysqli, $id_producto)
         );
         $lol = $mysqli->query($query);
     } else {

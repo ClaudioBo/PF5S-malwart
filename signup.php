@@ -1,5 +1,5 @@
 <?php
-
+$sesionUsuario = null;
 $error = [];
 
 if (isset($_SESSION['id_user'])) {

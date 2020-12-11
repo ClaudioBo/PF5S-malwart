@@ -136,10 +136,10 @@ include "head.html"
                     <span><strong>$<?php echo ($total) ?> MXN</strong></span>
                   </li>
                 </ul>
+                <form method="POST">
+                  <button name="comprar" type="submit" class="btn btn-primary btn-block">Comprar</button>
+                </form>
               </div>
-              <form method="POST">
-                <button name="comprar" type="submit" class="btn btn-danger">Comprar</button>
-              </form>
           <?php
 
         }
