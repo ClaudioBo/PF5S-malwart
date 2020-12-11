@@ -38,12 +38,8 @@ if ($sesionUsuario != null) {
             $direccion = $_POST['direccion'];
             $telefono = $_POST['telefono'];
             if (editUsuario($idusuario, $nombre, $apellido, $pass, $direccion, $telefono)) {
-                if($usuarioEditar != $sesionUsuario){
-                    if ($sesionUsuario->rol == 'Administrador') {
-                        header('Location: adminUsuarios.php');
-                    } else {
-                        header('Location: index.php');
-                    }
+                if ($sesionUsuario->rol == 'Administrador') {
+                    header('Location: adminUsuarios.php');
                 } else {
                     header('Location: index.php');
                 }
