@@ -511,10 +511,10 @@ function cargarTickets()
     return $tickets;
 }
 
-function soyAdmin($id_usuario)
+function cambiarRol($id_usuario, $rol)
 {
     global $mysqli;
-    $query = "UPDATE dt_usuarios SET rol='Administrador' WHERE id='{$id_usuario}';";
+    $query = "UPDATE dt_usuarios SET rol='{$rol}' WHERE id='{$id_usuario}';";
     return $mysqli->query($query);
 }
 

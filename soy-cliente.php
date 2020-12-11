@@ -4,10 +4,8 @@ include_once "connections/conn.php";
 include_once "connections/funciones.php";
 $sesionUsuario = cargarUsuarioSesion();
 if($sesionUsuario != null){
-  soyAdmin($sesionUsuario->id);
-  echo("ya eres admin :))))))))))))");
+  cambiarRol($sesionUsuario->id,"Normal");
+  echo("ya eres al q le robamos dinero :))))))))))))");
 } else {
   echo("inisia cecion primero pssssssssss");
 }
-
-?>
