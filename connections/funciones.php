@@ -15,7 +15,7 @@ function registrarUsuario($email, $pass, $nom, $apell, $direc, $tel)
     }
 
     if (count($errores) == 0) {
-        $query = "INSERT INTO usuarios (correo,contraseña,nombre,apellido,direccion,telefono) VALUES (?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO dt_usuarios (correo,contraseña,nombre,apellido,direccion,telefono) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $mysqli->prepare($query);
         if ($mysqli->error) {
             echo $mysqli->error;
@@ -60,7 +60,7 @@ function editUsuario($idUsuario, $nombre, $apellido, $contraseña, $direccion, $
 {
     global $mysqli;
     $query = sprintf(
-        "UPDATE usuarios SET nombre = '%s',apellido = '%s', contraseña = '%s',direccion = '%s' ,telefono = '%s' WHERE id ={$idUsuario}",
+        "UPDATE dt_usuarios SET nombre = '%s',apellido = '%s', contraseña = '%s',direccion = '%s' ,telefono = '%s' WHERE id ={$idUsuario}",
         mysqli_escape_string($mysqli, $nombre),
         mysqli_escape_string($mysqli, $apellido),
         mysqli_escape_string($mysqli, $contraseña),
@@ -260,7 +260,7 @@ function agregarProducto($nombre, $precio, $existencia, $departamento, $descripc
     $img = addslashes(file_get_contents($imagen['tmp_name']));
 
     $query = sprintf(
-        "INSERT INTO productos VALUES (NULL, '%s','%s','%s','%s','%s','%s')",
+        "INSERT INTO dt_productos VALUES (NULL, '%s','%s','%s','%s','%s','%s')",
         mysqli_escape_string($mysqli, $nombre),
         mysqli_escape_string($mysqli, $precio),
         mysqli_escape_string($mysqli, $existencia),
@@ -288,7 +288,7 @@ function editarProducto($id_producto, $nombre, $precio, $existencia, $departamen
         $img = addslashes(file_get_contents($imagen['tmp_name']));
 
         $query = sprintf(
-            "UPDATE productos SET nombre='%s', precio='%s', existencia='%s', departamento='%s', descripcion='%s', imagen='%s' WHERE id='%s'",
+            "UPDATE dt_productos SET nombre='%s', precio='%s', existencia='%s', departamento='%s', descripcion='%s', imagen='%s' WHERE id='%s'",
             mysqli_escape_string($mysqli, $nombre),
             mysqli_escape_string($mysqli, $precio),
             mysqli_escape_string($mysqli, $existencia),
@@ -299,7 +299,7 @@ function editarProducto($id_producto, $nombre, $precio, $existencia, $departamen
         );
         $lol = $mysqli->query($query);
     } else {
-        $query = "UPDATE productos SET nombre=?, precio=?, existencia=?, departamento=?, descripcion=? WHERE id=?;";
+        $query = "UPDATE dt_productos SET nombre=?, precio=?, existencia=?, departamento=?, descripcion=? WHERE id=?;";
         $stmt = $mysqli->prepare($query);
         $stmt->bind_param('siissi', $nombre, $precio, $existencia, $departamento, $descripcion, $id_producto);
         $stmt->execute();
@@ -318,8 +318,8 @@ function cargarReviews($idProducto)
     $reviews = [];
     $query = sprintf(
         "SELECT r.id,r.usuario_id,u.nombre,producto_id,calificacion,comentario 
-        FROM reviews AS r 
-        INNER JOIN usuarios AS u 
+        FROM dt_reviews AS r 
+        INNER JOIN dt_usuarios AS u 
         ON r.usuario_id = u.id
         WHERE r.producto_id = %s;",
         mysqli_escape_string($mysqli, trim($idProducto))
@@ -343,7 +343,7 @@ function cargarReviews($idProducto)
 function enviarReseña($idUsuario, $idProducto, $calificacion, $comentario)
 {
     global $mysqli;
-    $query = "INSERT INTO reviews VALUES (NULL, ?, ?, ?, ?)";
+    $query = "INSERT INTO dt_reviews VALUES (NULL, ?, ?, ?, ?)";
     $stmt = $mysqli->prepare($query);
     $stmt->bind_param('iiis', $idUsuario, $idProducto, $calificacion, $comentario);
     $stmt->execute();
@@ -372,11 +372,11 @@ function añadirProductoCarrito($usuario, $id_producto, $cantidad)
     $query = null;
     if ($carrito_item_encontrado == null) {
         //No encontrado - añadir carrito
-        $query = "INSERT INTO carritos VALUES (NULL, {$usuario->id}, {$id_producto},{$cantidad})";
+        $query = "INSERT INTO dt_carritos VALUES (NULL, {$usuario->id}, {$id_producto},{$cantidad})";
         // echo "añadir";
     } else {
         //Encontrado - cambiar precio
-        $query = "UPDATE carritos SET cantidad={$cantidad} WHERE id_usuario={$usuario->id} AND id_producto={$id_producto}";
+        $query = "UPDATE dt_carritos SET cantidad={$cantidad} WHERE id_usuario={$usuario->id} AND id_producto={$id_producto}";
         // echo "cambiar";
     }
     return $mysqli->query($query);
@@ -402,7 +402,7 @@ function borrarCarrito($id_usuario)
 function insertarTicketRelacion($id_ticket, $id_producto, $cantidad)
 {
     global $mysqli;
-    $query = "INSERT INTO ticket_productos (id_ticket, id_producto, cantidad) VALUES ({$id_ticket}, {$id_producto}, {$cantidad})";
+    $query = "INSERT INTO dt_ticket_productos (id_ticket, id_producto, cantidad) VALUES ({$id_ticket}, {$id_producto}, {$cantidad})";
     $res = $mysqli->query($query);
     return $res;
 }
@@ -410,7 +410,7 @@ function insertarTicketRelacion($id_ticket, $id_producto, $cantidad)
 function crearTicket($id_cliente)
 {
     global $mysqli;
-    $query = "INSERT INTO tickets (id_cliente) VALUES ({$id_cliente})";
+    $query = "INSERT INTO dt_tickets (id_cliente) VALUES ({$id_cliente})";
     $res = $mysqli->query($query);
     return $mysqli->insert_id;
 }
@@ -424,7 +424,7 @@ function comprar($usuario)
         $prod = $car->producto;
         $cantidad = $car->cantidad;
         $nuvex = ($prod->existencia - $cantidad);
-        $query = "UPDATE productos SET existencia = {$nuvex} WHERE id = {$prod->id}";
+        $query = "UPDATE dt_productos SET existencia = {$nuvex} WHERE id = {$prod->id}";
         $res = $mysqli->query($query);
         insertarTicketRelacion($id_ticket, $prod->id, $cantidad);
     }
@@ -514,7 +514,7 @@ function cargarTickets()
 function soyAdmin($id_usuario)
 {
     global $mysqli;
-    $query = "UPDATE usuarios SET rol='Administrador' WHERE id='{$id_usuario}';";
+    $query = "UPDATE dt_usuarios SET rol='Administrador' WHERE id='{$id_usuario}';";
     return $mysqli->query($query);
 }
 
