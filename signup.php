@@ -28,11 +28,35 @@ if (isset($_POST['send-login'])) {
     $error[] = "No se ingreso la contraseña";
   }
 
+  //Validacion de nombre
+  if ((!isset($_POST['nombre'])) || $_POST['nombre'] == '') {
+    $error[] = "No se ingreso el nombre";
+  }
+
+  //Validacion de apellido
+  if ((!isset($_POST['apellido'])) || $_POST['apellido'] == '') {
+    $error[] = "No se ingreso el apellido";
+  }
+
+  //Validacion de direccion
+  if ((!isset($_POST['direccion'])) || $_POST['direccion'] == '') {
+    $error[] = "No se ingreso la direccion";
+  }
+
+  //Validacion de telefono
+  if ((!isset($_POST['telefono'])) || $_POST['telefono'] == '') {
+    $error[] = "No se ingreso el telefono";
+  }
+
   if(count($error) == 0){
     $email = trim($_POST['correo']);
     $pass = trim($_POST['pass']);
+    $nom = trim($_POST['nombre']);
+    $apell = trim($_POST['apellido']);
+    $direc = trim($_POST['direccion']);
+    $tel = trim($_POST['telefono']);
 
-    $reg_errores = registrarUsuario($email,$pass);
+    $reg_errores = registrarUsuario($email,$pass, $nom, $apell, $direc, $tel);
 
     if(count($reg_errores) == 0){
       header('Location: nowLogin.php');
@@ -91,6 +115,18 @@ include "head.html"
           <br>
           <label><i class="fa fa-asterisk"></i> Contraseña</label>
           <input name="pass" type="password" class="form-control" placeholder="********">
+          <br>
+          <label><i class="fa fa-user-circle-o"></i> Nombre</label>
+          <input name="nombre" type="text" class="form-control" placeholder="Nombre">
+          <br>
+          <label><i class="fa fa-user-circle-o"></i> Apellido</label>
+          <input name="apellido" type="text" class="form-control" placeholder="Apellido">
+          <br>
+          <label><i class="fa fa-map-marker"></i> Direccion</label>
+          <input name="direccion" type="text" class="form-control" placeholder="Direccion">
+          <br>
+          <label><i class="fa fa-phone"></i> Telefono</label>
+          <input name="telefono" type="tel" class="form-control" placeholder="622-111-81-09" pattern="[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}">
           <br>
           <button name="send-login" type="submit" class="btn btn-info btn-lg ml-auto d-block">Crear cuenta</button>
         </form>

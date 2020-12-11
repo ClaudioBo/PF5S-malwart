@@ -1,5 +1,5 @@
 <?php
-function registrarUsuario($email, $pass)
+function registrarUsuario($email, $pass, $nom, $apell, $direc, $tel )
 {
     global $mysqli;
     $errores = [];
@@ -15,12 +15,12 @@ function registrarUsuario($email, $pass)
     $stmt->close();
 
     if (count($errores) == 0) {
-        $query = "INSERT INTO usuarios (correo,contraseña) VALUES (?, ?)";
+        $query = "INSERT INTO usuarios (correo,contraseña,nombre,apellido,direccion,telefono) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $mysqli->prepare($query);
         if ($mysqli->error) {
             echo $mysqli->error;
         }
-        $stmt->bind_param('ss', $email, $pass);
+        $stmt->bind_param('ss', $email, $pass, $nom, $apell, $direc, $tel);
         $stmt->execute();
     }
     $stmt->close();
