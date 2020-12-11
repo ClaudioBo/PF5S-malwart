@@ -10,7 +10,7 @@ if ($sesionUsuario != null) {
             $producto_id = $_POST['producto_id'];
             borrarProducto(trim($producto_id));
         }
-        $producto = cargarProductos(null, false);
+        $producto = cargarProductos(null, false, null);
     } else {
         header('Location: error.php');
     }

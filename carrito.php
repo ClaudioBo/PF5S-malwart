@@ -139,6 +139,8 @@ include "head.html"
                 <form method="POST">
                   <button name="comprar" type="submit" class="btn btn-primary btn-block">Comprar</button>
                 </form>
+                <hr>
+                <a href="index.php" class="btn btn-success btn-block">Seguir comprando</a>
               </div>
           <?php
 

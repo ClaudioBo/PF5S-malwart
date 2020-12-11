@@ -181,17 +181,25 @@ function borrarUsuario($id_usuario)
     return $res;
 }
 
-function cargarProductos($busqueda, $cargarImagen)
+function cargarProductos($busqueda, $cargarImagen, $pagina)
 {
     include_once "clases/usuario.php";
     include_once "clases/producto.php";
     global $mysqli;
     $queryBusqueda = "";
     if (isset($busqueda)) {
-        $queryBusqueda = "WHERE nombre LIKE '%" . mysqli_escape_string($mysqli, $busqueda) . "%'";
+        $queryBusqueda = $queryBusqueda." WHERE nombre LIKE '%" . mysqli_escape_string($mysqli, $busqueda) . "%'";
+    }
+    if (isset($pagina)) {
+        $queryBusqueda = $queryBusqueda." LIMIT 9";
+        $queryBusqueda = $queryBusqueda." OFFSET " . (9 * $pagina);
     }
     $productos = [];
     $query = "SELECT * FROM productos " . $queryBusqueda;
+    if (!$cargarImagen) {
+        $query = "SELECT id,nombre,precio,existencia,departamento,descripcion FROM productos " . $queryBusqueda;
+    }
+    echo($query);
     if ($result = $mysqli->query($query)) {
         while ($res = mysqli_fetch_array($result)) {
             $prd = new Producto();

@@ -5,11 +5,15 @@ include_once "connections/funciones.php";
 $sesionUsuario = cargarUsuarioSesion();
 
 $busqueda = null;
+$pagina = 0;
 if (isset($_GET['busqueda'])) {
   $busqueda = trim($_GET['busqueda']);
 }
+if (isset($_GET['pagina'])) {
+  $pagina = trim($_GET['pagina']);
+}
 
-$productos = cargarProductos($busqueda, true);
+$productos = cargarProductos($busqueda, true, $pagina);
 $mysqli->close();
 ?>
 
@@ -67,6 +71,7 @@ include "head.html"
         } ?>
 
       </div>
+      <a class="btn btn-danger btn-lg btn-block" href="">lol</a>
     </div>
 
   </div>
