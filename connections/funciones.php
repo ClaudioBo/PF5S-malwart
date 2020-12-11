@@ -11,8 +11,8 @@ function registrarUsuario($email, $pass, $nom, $apell, $direc, $tel)
         if ($result->num_rows != 0) {
             $errores[] = "Ya existe una cuenta con el mismo correo electronico";
         }
+        $stmt->close();
     }
-    $stmt->close();
 
     if (count($errores) == 0) {
         $query = "INSERT INTO usuarios (correo,contraseña,nombre,apellido,direccion,telefono) VALUES (?, ?, ?, ?, ?, ?)";
@@ -51,8 +51,8 @@ function loginUsuario($email, $pass)
         } else {
             $errores[] = "Cuenta inexistente";
         }
+        $stmt->close();
     }
-    $stmt->close();
     return $errores;
 }
 
@@ -335,8 +335,8 @@ function cargarReviews($idProducto)
             $rev->comentario = $res['comentario'];
             array_push($reviews, $rev);
         }
+        $result->free_result();
     }
-    $result->free_result();
     return $reviews;
 }
 
