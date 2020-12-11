@@ -22,8 +22,8 @@ function registrarUsuario($email, $pass, $nom, $apell, $direc, $tel)
         }
         $stmt->bind_param('ssssss', $email, $pass, $nom, $apell, $direc, $tel);
         $stmt->execute();
+        $stmt->close();
     }
-    $stmt->close();
     return $errores;
 }
 
