@@ -1,5 +1,5 @@
 <?php
-$error = [];
+$errores = [];
 
 include_once "connections/conn.php";
 include_once "connections/funciones.php";
@@ -16,17 +16,17 @@ if ($sesionUsuario != null) {
             header('Location: error.php');
         }
     }
-
     if (isset($_POST['send-edit'])) {
         foreach ($_POST as $taco => $salsa) {
             if ($salsa == '' && $taco != "send-edit") {
-                $error[] = "la caja $taco es requerida";
+                $errores[] = "No debes dejar ningun campo vacio";
+                break;
             }
         }
 
         if (count($error) == 0) {
             if ($_POST['pass'] != $_POST['pass2']) {
-                $error[] = "la contraseña no coincide";
+                $errores[] = "Las contraseñas no coinciden";
             }
         }
 
@@ -44,7 +44,7 @@ if ($sesionUsuario != null) {
                     header('Location: index.php');
                 }
             } else {
-                $error[] = "hubo un problema con la query";
+                $errores[] = "No se pudo modificar al usuario";
             }
         }
     }
@@ -57,7 +57,7 @@ if ($sesionUsuario != null) {
 
 <!-- Head -->
 <?php
-$selectedPage = "Cuentas - Ingreso";
+$selectedPage = "Editar usuario";
 include "head.html"
 ?>
 
@@ -74,24 +74,7 @@ include "head.html"
             <div class="card-body">
                 <h4 class="card-title text-center">Editar Perfil</h4>
                 <hr>
-                <?php
-                if (count($error) != 0) {
-                ?>
-                    <div class="alert alert-danger" role="alert">
-                        <strong>Porfavor, lea los siguientes errores:</strong>
-                        <ul>
-                            <?php
-                            foreach ($error as $mensaje) {
-                            ?>
-                                <li><?php echo $mensaje ?></li>
-                            <?php
-                            }
-                            ?>
-                        </ul>
-                    </div>
-                <?php
-                }
-                ?>
+                <?php imprimirErrores($errores) ?>
                 <form method="POST">
                     <label><i class="fa "></i>Nombre</label>
                     <input name="nombre" type="text" class="form-control" placeholder="Nombre" value="<?php echo $usuarioEditar->nombre; ?>">

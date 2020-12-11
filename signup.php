@@ -1,6 +1,7 @@
 <?php
+include_once "connections/funciones.php";
 $sesionUsuario = null;
-$error = [];
+$errores = [];
 
 if (isset($_SESSION['id_user'])) {
   header('Location: cpanel.php');
@@ -8,47 +9,46 @@ if (isset($_SESSION['id_user'])) {
 
 if (isset($_POST['send-login'])) {
   include_once "connections/conn.php";
-  include_once "connections/funciones.php";
 
   // Validacion de correo
   if (isset($_POST['correo'])) {
     if ($_POST['correo'] == '') {
-      $error[] = "No se ingreso correo";
+      $errores[] = "No se ingreso correo";
     } else {
       if (!filter_var($_POST['correo'], FILTER_VALIDATE_EMAIL)) {
-        $error[] = "El e-mail no es valido";
+        $errores[] = "El e-mail no es valido";
       }
     }
   } else {
-    $error[] = "No se ingreso correo";
+    $errores[] = "No se ingreso correo";
   }
 
   // Validacion de contraseña
   if ((!isset($_POST['pass'])) || $_POST['pass'] == '') {
-    $error[] = "No se ingreso la contraseña";
+    $errores[] = "No se ingreso la contraseña";
   }
 
   //Validacion de nombre
   if ((!isset($_POST['nombre'])) || $_POST['nombre'] == '') {
-    $error[] = "No se ingreso el nombre";
+    $errores[] = "No se ingreso el nombre";
   }
 
   //Validacion de apellido
   if ((!isset($_POST['apellido'])) || $_POST['apellido'] == '') {
-    $error[] = "No se ingreso el apellido";
+    $errores[] = "No se ingreso el apellido";
   }
 
   //Validacion de direccion
   if ((!isset($_POST['direccion'])) || $_POST['direccion'] == '') {
-    $error[] = "No se ingreso la direccion";
+    $errores[] = "No se ingreso la direccion";
   }
 
   //Validacion de telefono
   if ((!isset($_POST['telefono'])) || $_POST['telefono'] == '') {
-    $error[] = "No se ingreso el telefono";
+    $errores[] = "No se ingreso el telefono";
   }
 
-  if(count($error) == 0){
+  if(count($errores) == 0){
     $email = trim($_POST['correo']);
     $pass = trim($_POST['pass']);
     $nom = trim($_POST['nombre']);
@@ -61,7 +61,7 @@ if (isset($_POST['send-login'])) {
     if(count($reg_errores) == 0){
       header('Location: nowLogin.php');
     } else {
-      $error = array_merge($error,$reg_errores);
+      $errores = array_merge($errores,$reg_errores);
     }
 
   }
@@ -74,7 +74,7 @@ if (isset($_POST['send-login'])) {
 
 <!-- Head -->
 <?php
-$selectedPage = "Usuario - Registro";
+$selectedPage = "Registro";
 include "head.html"
 ?>
 
@@ -91,24 +91,7 @@ include "head.html"
       <div class="card-body">
         <h4 class="card-title text-center">Crear cuenta</h4>
         <hr>
-        <?php
-        if (count($error) != 0) {
-        ?>
-          <div class="alert alert-danger" role="alert">
-            <strong>Porfavor, lea los siguientes errores:</strong>
-            <ul>
-              <?php
-              foreach ($error as $mensaje) {
-              ?>
-                <li><?php echo $mensaje ?></li>
-              <?php
-              }
-              ?>
-            </ul>
-          </div>
-        <?php
-        }
-        ?>
+        <?php imprimirErrores($errores) ?>
         <form method="POST">
           <label><i class="fa fa-envelope"></i> Correo electronico</label>
           <input name="correo" type="email" class="form-control" placeholder="tucorreo@gmail.com">

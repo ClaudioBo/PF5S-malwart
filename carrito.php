@@ -2,6 +2,7 @@
 include_once "connections/conn.php";
 include_once "connections/funciones.php";
 
+$errores = [];
 $sesionUsuario = cargarUsuarioSesion();
 if ($sesionUsuario != null) {
   if (isset($_POST['send-carrito'])) {
@@ -22,7 +23,7 @@ if ($sesionUsuario != null) {
     if ($exito != -1) {
       header('Location: gracias.php?folio=' . $exito);
     } else {
-      header('Location: error.php');
+      $errores[] = "No se pudo realizar la compra, no hay suficientes articulos";
     }
   }
 }
@@ -36,7 +37,7 @@ $mysqli->close();
 
 <!-- Head -->
 <?php
-$selectedPage = "Productos";
+$selectedPage = "Carrito";
 include "head.html"
 ?>
 
@@ -50,7 +51,7 @@ include "head.html"
   <div class="container-fluid mt-5 mb-5 col-sm-11 col-md-8 col-lg-8 col-xl-8">
     <div class="row">
       <div class="col">
-
+        <?php imprimirErrores($errores) ?>
         <div class="card">
           <div class="card-header">
             <strong>Tu carrito</strong>

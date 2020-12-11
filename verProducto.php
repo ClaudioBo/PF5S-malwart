@@ -1,6 +1,7 @@
 <?php
 include_once "connections/conn.php";
 include_once "connections/funciones.php";
+$errores = [];
 if (isset($_GET['id'])) {
   if (is_numeric($_GET['id'])) {
     $sesionUsuario = cargarUsuarioSesion();
@@ -10,8 +11,12 @@ if (isset($_GET['id'])) {
     if (isset($_POST['send-review'])) {
       $calificacion = $_POST['calificacion'];
       $comentario = trim($_POST['comentario']);
-      //TODO: hacer comprobacion lol
-      enviarReseña($_SESSION['id_user'], trim($_GET['id']), $calificacion, $comentario);
+      if(!empty($comentario)){
+        enviarReseña($_SESSION['id_user'], trim($_GET['id']), $calificacion, $comentario);
+      } else {
+        $errores[] = "No escribiste un comentario";
+      }
+
     }
 
     $reviews = cargarReviews(trim($_GET['id']));
@@ -30,7 +35,7 @@ $mysqli->close();
 
 <!-- Head -->
 <?php
-$selectedPage = "Productos";
+$selectedPage = $producto->nombre;
 include "head.html"
 ?>
 
@@ -95,9 +100,9 @@ include "head.html"
 
     <div class="card">
       <div class="card-body">
-        <div class="container-fluid">
-
+        <div class="container-fluid">´
           <?php
+          imprimirErrores($errores);
           if (count($reviews) != 0) {
             foreach ($reviews as $rev) {
           ?>

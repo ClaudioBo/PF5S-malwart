@@ -11,7 +11,7 @@ if (!isset($_GET['folio']) || !is_numeric($_GET['folio'])) {
 
 <!-- Head -->
 <?php
-$selectedPage = "Error";
+$selectedPage = "Gracias";
 include "head.html"
 ?>
 

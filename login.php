@@ -1,33 +1,33 @@
 <?php
+include_once "connections/funciones.php";
 session_start();
 $sesionUsuario = null;
-$error = [];
+$errores = [];
 if (isset($_SESSION['id_user'])) {
   header('Location: index.php');
 }
 
 if (isset($_POST['send-login'])) {
   include_once "connections/conn.php";
-  include_once "connections/funciones.php";
 
   // Validacion de correo
   if (isset($_POST['correo'])) {
     if ($_POST['correo'] == '') {
-      $error[] = "No se ingreso correo";
+      $errores[] = "No se ingreso correo";
     } else {
       if (!filter_var($_POST['correo'], FILTER_VALIDATE_EMAIL)) {
-        $error[] = "El e-mail no es valido";
+        $errores[] = "El e-mail no es valido";
       }
     }
   } else {
-    $error[] = "No se ingreso correo";
+    $errores[] = "No se ingreso correo";
   }
   // Validacion de contraseña
   if ((!isset($_POST['pass'])) || $_POST['pass'] == '') {
-    $error[] = "No se ingreso la contraseña";
+    $errores[] = "No se ingreso la contraseña";
   }
 
-  if (count($error) == 0) {
+  if (count($errores) == 0) {
     $email = trim($_POST['correo']);
     $pass = trim($_POST['pass']);
 
@@ -37,7 +37,7 @@ if (isset($_POST['send-login'])) {
       $_SESSION['id_user'] = $id_o_error;
       header('Location: index.php');
     } else {
-      $error = array_merge($error, $id_o_error);
+      $errores = array_merge($errores, $id_o_error);
     }
   }
 }
@@ -49,7 +49,7 @@ if (isset($_POST['send-login'])) {
 
 <!-- Head -->
 <?php
-$selectedPage = "Cuentas - Ingreso";
+$selectedPage = "Ingreso";
 include "head.html"
 ?>
 
@@ -66,24 +66,7 @@ include "head.html"
       <div class="card-body">
         <h4 class="card-title text-center">Inicio de sesión</h4>
         <hr>
-        <?php
-        if (count($error) != 0) {
-        ?>
-          <div class="alert alert-danger" role="alert">
-            <strong>Porfavor, lea los siguientes errores:</strong>
-            <ul>
-              <?php
-              foreach ($error as $mensaje) {
-              ?>
-                <li><?php echo $mensaje ?></li>
-              <?php
-              }
-              ?>
-            </ul>
-          </div>
-        <?php
-        }
-        ?>
+        <?php imprimirErrores($errores) ?>
         <form method="POST">
           <label><i class="fa fa-envelope"></i> Correo electronico</label>
           <input name="correo" type="email" class="form-control" placeholder="tucorreo@gmail.com">

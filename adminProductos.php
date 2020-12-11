@@ -23,7 +23,7 @@ if ($sesionUsuario != null) {
 <html lang="en">
 
 <?php
-$selectedPage = "administrarProductos";
+$selectedPage = "Administrar productos";
 include "head.html"
 ?>
 
@@ -33,7 +33,7 @@ include "head.html"
     include "navbar.php";
     ?>
 
-    <!-- Page Content -->´
+    <!-- Page Content -->
     <div class="container">
         <div class="card">
             <div class="card-doby">

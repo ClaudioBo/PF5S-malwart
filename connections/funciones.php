@@ -188,18 +188,17 @@ function cargarProductos($busqueda, $cargarImagen, $pagina)
     global $mysqli;
     $queryBusqueda = "";
     if (isset($busqueda)) {
-        $queryBusqueda = $queryBusqueda." WHERE nombre LIKE '%" . mysqli_escape_string($mysqli, $busqueda) . "%'";
+        $queryBusqueda = $queryBusqueda . " WHERE nombre LIKE '%" . mysqli_escape_string($mysqli, $busqueda) . "%'";
     }
     if (isset($pagina)) {
-        $queryBusqueda = $queryBusqueda." LIMIT 9";
-        $queryBusqueda = $queryBusqueda." OFFSET " . (9 * $pagina);
+        $queryBusqueda = $queryBusqueda . " LIMIT 9";
+        $queryBusqueda = $queryBusqueda . " OFFSET " . (9 * $pagina);
     }
     $productos = [];
     $query = "SELECT * FROM productos " . $queryBusqueda;
     if (!$cargarImagen) {
         $query = "SELECT id,nombre,precio,existencia,departamento,descripcion FROM productos " . $queryBusqueda;
     }
-    echo($query);
     if ($result = $mysqli->query($query)) {
         while ($res = mysqli_fetch_array($result)) {
             $prd = new Producto();
@@ -421,6 +420,7 @@ function comprar($usuario)
     global $mysqli;
     $id_ticket = crearTicket($usuario->id);
     foreach ($usuario->carrito as $car) {
+        //TODO: comprobar existencia
         $prod = $car->producto;
         $cantidad = $car->cantidad;
         $nuvex = ($prod->existencia - $cantidad);
@@ -509,4 +509,31 @@ function cargarTickets()
         $result->free_result();
     }
     return $tickets;
+}
+
+function soyAdmin($id_usuario)
+{
+    global $mysqli;
+    $query = "UPDATE usuarios SET rol='Administrador' WHERE id='{$id_usuario}';";
+    return $mysqli->query($query);
+}
+
+function imprimirErrores($error)
+{
+    if (count($error) != 0) {
+?>
+        <div class="alert alert-danger" role="alert">
+            <strong>Porfavor, lea los siguientes errores:</strong>
+            <ul>
+                <?php
+                foreach ($error as $mensaje) {
+                ?>
+                    <li><?php echo $mensaje ?></li>
+                <?php
+                }
+                ?>
+            </ul>
+        </div>
+<?php
+    }
 }

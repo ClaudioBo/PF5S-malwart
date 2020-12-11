@@ -4,7 +4,7 @@
 <!-- Head -->
 <?php
 $sesionUsuario = null;
-$selectedPage = "Cuentas - Registro";
+$selectedPage = "Registro";
 include "head.html"
 ?>
 

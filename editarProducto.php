@@ -2,41 +2,46 @@
 include_once "connections/conn.php";
 include_once "connections/funciones.php";
 $sesionUsuario = cargarUsuarioSesion();
+$errores = [];
 if ($sesionUsuario != null) {
-    if (isset($_POST['send-admin-editar'])) {
-        $idproducto = $_POST['producto_id'];
-        $producto = cargarProducto(trim($idproducto), false);
-        if ($producto != null) {
-            $nombre = $_POST['nombre'];
-            $precio = $_POST['precio'];
-            $existencia = $_POST['existencia'];
-            $departamento = $_POST['departamento'];
-            $descripcion = $_POST['descripcion'];
-            $imagen = null;
-            if(!empty($_FILES['img']['name'])){
-                $imagen = $_FILES['img'];
-            }
-            if (
-                $_POST['nombre'] == '' ||
-                $_POST['precio'] == '' ||
-                $_POST['existencia'] == '' ||
-                $_POST['departamento'] == '' ||
-                $_POST['descripcion'] == ''
-            ) {
-                //rellene todos los campos puto
-            }
+    if ($sesionUsuario->rol != 'Normal') {
+        if (isset($_POST['send-admin-editar'])) {
+            $idproducto = $_POST['producto_id'];
+            $producto = cargarProducto(trim($idproducto), false);
+            if ($producto != null) {
+                $nombre = $_POST['nombre'];
+                $precio = $_POST['precio'];
+                $existencia = $_POST['existencia'];
+                $departamento = $_POST['departamento'];
+                $descripcion = $_POST['descripcion'];
+                $imagen = null;
+                if (!empty($_FILES['img']['name'])) {
+                    $imagen = $_FILES['img'];
+                }
+                if (
+                    $_POST['nombre'] == '' ||
+                    $_POST['precio'] == '' ||
+                    $_POST['existencia'] == '' ||
+                    $_POST['departamento'] == '' ||
+                    $_POST['descripcion'] == ''
+                ) {
+                    $errores[] = "No debes dejar ningun campo vacio";
+                }
 
-            if (editarProducto($idproducto, $nombre, $precio, $existencia, $departamento, $descripcion, $imagen)) {
-                header('Location: adminProductos.php');
+                if (editarProducto($idproducto, $nombre, $precio, $existencia, $departamento, $descripcion, $imagen)) {
+                    header('Location: adminProductos.php');
+                } else {
+                    $errores[] = "No se pudo editar el producto";
+                }
             } else {
                 header('Location: error.php');
             }
+        } elseif (isset($_GET['id'])) {
+            $producto = cargarProducto(trim($_GET['id']), true);
+            if ($producto == null) {
+                header('Location: error.php');
+            }
         } else {
-            header('Location: error.php');
-        }
-    } elseif (isset($_GET['id'])) {
-        $producto = cargarProducto(trim($_GET['id']), true);
-        if ($producto == null) {
             header('Location: error.php');
         }
     } else {
@@ -53,7 +58,7 @@ if ($sesionUsuario != null) {
 
 <!-- Head -->
 <?php
-$selectedPage = "Cuentas - Ingreso";
+$selectedPage = "Editar producto";
 include "head.html"
 ?>
 
@@ -69,6 +74,7 @@ include "head.html"
         <div class="shadow card" style="border-top: 10px solid #007BFF">
             <div class="card-body">
                 <h4 class="card-title text-center">Editar Producto</h4>
+                <?php imprimirErrores($errores) ?>
                 <hr>
                 <form method="POST" enctype='multipart/form-data'>
                     <label><i class="fa"></i>Nombre</label>
