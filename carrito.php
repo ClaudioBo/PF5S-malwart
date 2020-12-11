@@ -17,10 +17,10 @@ if ($sesionUsuario != null) {
     if ($exito) {
       $sesionUsuario = cargarUsuarioSesion(); //recargar usuario porque hubo un cambio en el cesto
     }
-  } elseif(isset($_POST['comprar'])){
+  } elseif (isset($_POST['comprar'])) {
     $exito = comprar($sesionUsuario);
-    if($exito != -1){
-      header('Location: gracias.php?folio='.$exito);
+    if ($exito != -1) {
+      header('Location: gracias.php?folio=' . $exito);
     } else {
       header('Location: error.php');
     }
@@ -76,7 +76,7 @@ include "head.html"
                           <?php echo ($carrito_item->cantidad) ?> piezas
                         </p>
                         <form method="POST">
-                          <input name="producto_id" hidden value="<?php echo($carrito_item->producto->id) ?>"/>
+                          <input name="producto_id" hidden value="<?php echo ($carrito_item->producto->id) ?>" />
                           <button name="borrar-item" type="submit" class="btn btn-danger">Borrar</button>
                         </form>
                       </div>
@@ -117,13 +117,13 @@ include "head.html"
                 <?php
                 $total = 0;
                 foreach ($sesionUsuario->carrito as $carrito_item) {
-                  $total += $carrito_item->producto->precio * $carrito_item->cantidad; 
+                  $total += $carrito_item->producto->precio * $carrito_item->cantidad;
                 }
                 ?>
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item d-flex justify-content-between border-0 px-0 pb-0">
                     Carrito
-                    <span>$<?php echo($total) ?> MXN</span>
+                    <span>$<?php echo ($total) ?> MXN</span>
                   </li>
                   <li class="list-group-item d-flex justify-content-between px-0">
                     Recoger en tienda
@@ -133,7 +133,7 @@ include "head.html"
                     <div>
                       <strong>Total</strong>
                     </div>
-                    <span><strong>$<?php echo($total) ?> MXN</strong></span>
+                    <span><strong>$<?php echo ($total) ?> MXN</strong></span>
                   </li>
                 </ul>
               </div>

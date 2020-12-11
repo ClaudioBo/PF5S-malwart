@@ -1,5 +1,5 @@
 <?php
-function registrarUsuario($email, $pass, $nom, $apell, $direc, $tel )
+function registrarUsuario($email, $pass, $nom, $apell, $direc, $tel)
 {
     global $mysqli;
     $errores = [];
@@ -20,7 +20,7 @@ function registrarUsuario($email, $pass, $nom, $apell, $direc, $tel )
         if ($mysqli->error) {
             echo $mysqli->error;
         }
-        $stmt->bind_param('ss', $email, $pass, $nom, $apell, $direc, $tel);
+        $stmt->bind_param('ssssss', $email, $pass, $nom, $apell, $direc, $tel);
         $stmt->execute();
     }
     $stmt->close();
@@ -237,6 +237,71 @@ function cargarProducto($id, $cargarImagen)
         $result->free_result();
     }
     return $prd;
+}
+
+function agregarProducto($nombre, $precio, $existencia, $departamento, $descripcion, $imagen)
+{
+    global $mysqli;
+    $file_name = $imagen['name'];
+    $target_dir = "upload/";
+    $target_file = $target_dir . basename($imagen["name"]);
+    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+    $extensions_arr = array("jpg", "jpeg", "png", "gif");
+    if (!in_array($imageFileType, $extensions_arr)) {
+        return false;
+    }
+    $img = addslashes(file_get_contents($imagen['tmp_name']));
+
+    $query = sprintf(
+        "INSERT INTO productos VALUES (NULL, '%s','%s','%s','%s','%s','%s')",
+        mysqli_escape_string($mysqli, $nombre),
+        mysqli_escape_string($mysqli, $precio),
+        mysqli_escape_string($mysqli, $existencia),
+        mysqli_escape_string($mysqli, $departamento),
+        mysqli_escape_string($mysqli, $descripcion),
+        $img,
+    );
+    $lol = $mysqli->query($query);
+    return true;
+}
+
+function editarProducto($id_producto, $nombre, $precio, $existencia, $departamento, $descripcion, $imagen)
+{
+    global $mysqli;
+    if ($imagen != null) {
+        //Comprobaciones lol
+        $file_name = $imagen['name'];
+        $target_dir = "upload/";
+        $target_file = $target_dir . basename($imagen["name"]);
+        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        $extensions_arr = array("jpg", "jpeg", "png", "gif");
+        if (!in_array($imageFileType, $extensions_arr)) {
+            return false;
+        }
+        $img = addslashes(file_get_contents($imagen['tmp_name']));
+
+        $query = sprintf(
+            "UPDATE productos SET nombre='%s', precio='%s', existencia='%s', departamento='%s', descripcion='%s', imagen='%s' WHERE id='%s'",
+            mysqli_escape_string($mysqli, $nombre),
+            mysqli_escape_string($mysqli, $precio),
+            mysqli_escape_string($mysqli, $existencia),
+            mysqli_escape_string($mysqli, $departamento),
+            mysqli_escape_string($mysqli, $descripcion),
+            $img,
+            mysqli_escape_string($mysqli, $id_producto),
+        );
+        $lol = $mysqli->query($query);
+    } else {
+        $query = "UPDATE productos SET nombre=?, precio=?, existencia=?, departamento=?, descripcion=? WHERE id=?;";
+        $stmt = $mysqli->prepare($query);
+        $stmt->bind_param('siissi', $nombre, $precio, $existencia, $departamento, $descripcion, $id_producto);
+        $stmt->execute();
+        $stmt->close();
+    }
+    if ($mysqli->error) {
+        echo $mysqli->error;
+    }
+    return true;
 }
 
 function cargarReviews($idProducto)

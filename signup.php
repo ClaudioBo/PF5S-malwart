@@ -126,7 +126,7 @@ include "head.html"
           <input name="direccion" type="text" class="form-control" placeholder="Direccion">
           <br>
           <label><i class="fa fa-phone"></i> Telefono</label>
-          <input name="telefono" type="tel" class="form-control" placeholder="622-111-81-09" pattern="[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}">
+          <input name="telefono" type="tel" class="form-control" placeholder="622-123-1234" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}">
           <br>
           <button name="send-login" type="submit" class="btn btn-info btn-lg ml-auto d-block">Crear cuenta</button>
         </form>
