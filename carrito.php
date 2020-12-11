@@ -19,8 +19,10 @@ if ($sesionUsuario != null) {
     }
   } elseif(isset($_POST['comprar'])){
     $exito = comprar($sesionUsuario);
-    if($exito){
-      $sesionUsuario = cargarUsuarioSesion();
+    if($exito != -1){
+      header('Location: gracias.php?folio='.$exito);
+    } else {
+      header('Location: error.php');
     }
   }
 }

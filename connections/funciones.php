@@ -315,7 +315,7 @@ function borrarCarrito($id_usuario){
 
 function insertarTicketRelacion($id_ticket, $id_producto, $cantidad){
     global $mysqli;
-    $query = "INSERT INTO ticket_producto (id_ticket, id_producto, cantidad) VALUES ({$id_ticket}, {$id_producto}, {$cantidad})";
+    $query = "INSERT INTO ticket_productos (id_ticket, id_producto, cantidad) VALUES ({$id_ticket}, {$id_producto}, {$cantidad})";
     $res = $mysqli->query($query);
     return $res;
 }
@@ -339,6 +339,10 @@ function comprar($usuario){
         insertarTicketRelacion($id_ticket, $prod->id, $cantidad);
     }
     borrarCarrito($usuario->id);
+    if ($mysqli->error) {
+        return -1;
+    }
+    return $id_ticket;
 }
 function cargarTicket($ticket_id)
 {
