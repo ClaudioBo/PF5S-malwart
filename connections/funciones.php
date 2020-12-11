@@ -144,7 +144,7 @@ function cargarUsuario($id)
             while ($res = mysqli_fetch_array($result)) {
                 $carrito_item = new CarritoItem();
                 $carrito_item->id = $res['id'];
-                $carrito_item->producto = cargarProducto($res['id_producto'],true);
+                $carrito_item->producto = cargarProducto($res['id_producto'], true);
                 $carrito_item->cantidad = $res['cantidad'];
                 array_push($carrito, $carrito_item);
             }
@@ -159,10 +159,8 @@ function cargarUsuario($id)
 function borrarProducto($id_producto)
 {
     global $mysqli;
-    $$query = "DELETE FROM productos WHERE id=?;";
-    if ($mysqli->error) {
-        echo $mysqli->error;
-    }
+    $query = "DELETE FROM productos WHERE id=?;";
+    $stmt = $mysqli->prepare($query);
     $stmt->bind_param('i', $id_producto);
     $res = $stmt->execute();
     $stmt->close();
@@ -183,7 +181,7 @@ function borrarUsuario($id_usuario)
     return $res;
 }
 
-function cargarProductos($busqueda)
+function cargarProductos($busqueda, $cargarImagen)
 {
     include_once "clases/usuario.php";
     include_once "clases/producto.php";
@@ -203,7 +201,9 @@ function cargarProductos($busqueda)
             $prd->existencia = $res['existencia'];
             $prd->departamento = $res['departamento'];
             $prd->descripcion = $res['descripcion'];
-            $prd->imagen = $res['imagen'];
+            if ($cargarImagen == true) {
+                $prd->imagen = $res['imagen'];
+            }
             array_push($productos, $prd);
         }
         $result->free_result();
@@ -319,31 +319,35 @@ function borrarProductoCarrito($usuario, $id_producto)
     return $res;
 }
 
-function borrarCarrito($id_usuario){
+function borrarCarrito($id_usuario)
+{
     global $mysqli;
     $query = "DELETE FROM carritos WHERE id_usuario='{$id_usuario}';";
     $res = $mysqli->query($query);
     return $res;
 }
 
-function insertarTicketRelacion($id_ticket, $id_producto, $cantidad){
+function insertarTicketRelacion($id_ticket, $id_producto, $cantidad)
+{
     global $mysqli;
     $query = "INSERT INTO ticket_productos (id_ticket, id_producto, cantidad) VALUES ({$id_ticket}, {$id_producto}, {$cantidad})";
     $res = $mysqli->query($query);
     return $res;
 }
 
-function crearTicket($id_cliente){
+function crearTicket($id_cliente)
+{
     global $mysqli;
     $query = "INSERT INTO tickets (id_cliente) VALUES ({$id_cliente})";
     $res = $mysqli->query($query);
     return $mysqli->insert_id;
 }
 
-function comprar($usuario){
+function comprar($usuario)
+{
     global $mysqli;
     $id_ticket = crearTicket($usuario->id);
-    foreach($usuario->carrito as $car){
+    foreach ($usuario->carrito as $car) {
         $prod = $car->producto;
         $cantidad = $car->cantidad;
         $nuvex = ($prod->existencia - $cantidad);
