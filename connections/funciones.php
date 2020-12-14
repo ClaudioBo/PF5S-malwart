@@ -56,7 +56,7 @@ function loginUsuario($email, $pass)
     return $errores;
 }
 
-function editUsuario($idUsuario, $nombre, $apellido, $contraseña, $direccion, $telefono)
+function editUsuario($idUsuario, $nombre, $apellido, $contraseña, $direccion, $telefono, $rol)
 {
     global $mysqli;
     $query = sprintf(
@@ -68,6 +68,13 @@ function editUsuario($idUsuario, $nombre, $apellido, $contraseña, $direccion, $
         mysqli_escape_string($mysqli, $telefono)
     );
     $res = $mysqli->query($query);
+    if($rol != null){
+        $query = sprintf(
+            "UPDATE dt_usuarios SET rol = '%s' WHERE id ={$idUsuario}",
+            mysqli_escape_string($mysqli, $rol)
+        );
+        $res = $mysqli->query($query);
+    }
     return $res;
 }
 

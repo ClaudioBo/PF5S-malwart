@@ -37,7 +37,11 @@ if ($sesionUsuario != null) {
             $pass = $_POST['pass'];
             $direccion = $_POST['direccion'];
             $telefono = $_POST['telefono'];
-            if (editUsuario($idusuario, $nombre, $apellido, $pass, $direccion, $telefono)) {
+            $rol = null;
+            if ($sesionUsuario->rol == 'Administrador') {
+                $rol = $_POST['rol'];
+            }
+            if (editUsuario($idusuario, $nombre, $apellido, $pass, $direccion, $telefono, $rol)) {
                 if ($sesionUsuario->rol == 'Administrador') {
                     header('Location: adminUsuarios.php');
                 } else {
@@ -94,6 +98,22 @@ include "head.html"
                     <label><i class="fa "></i>Telefono</label>
                     <input name="telefono" type="text" class="form-control" placeholder="Telefono" value="<?php echo $usuarioEditar->telefono; ?>">
                     <br>
+                    <?php
+                    if ($sesionUsuario->rol == 'Administrador') {
+                        ?>
+                        <label><i class="fa "></i>Rol</label>
+                        <div>
+                            <select name="rol">
+                                <!-- Hay un error aqui pero ya me da weba arreglarlo -->
+                                <option value="Administrador" <?php if ($usuarioEditar->rol == 'Administrador') echo ("selected") ?>>Administrador</option>
+                                <option value="Empleado" <?php if ($usuarioEditar->rol == 'Empleado') echo ("selected") ?>>Empleado</option>
+                                <option value="Cliente" <?php if ($usuarioEditar->rol == 'Cliente') echo ("selected") ?>>Cliente</option>
+                            </select>
+                        </div>
+                        <br>
+                    <?php
+                    }
+                    ?>
                     <input name="usuario_id" hidden value="<?php echo ($usuarioEditar->id) ?>" />
                     <button name="send-edit" type="submit" class="btn btn-primary btn-lg ml-auto d-block">Aceptar</button>
                 </form>
